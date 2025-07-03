@@ -6,11 +6,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\Contracts\OAuthenticatable;
+use Laravel\Passport\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements OAuthenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +23,15 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'user_type',
+        'is_verified',
+        'is_active',
+        'profile_visibility',
+        'privacy_settings',
+        'timezone',
+        'role_ids',
+        'cv_file_path',
     ];
 
     /**
@@ -31,6 +42,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'privacy_settings',
+        'role_ids',
     ];
 
     /**
@@ -43,6 +56,14 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'date_created' => 'datetime',
+            'last_login' => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'is_verified' => 'boolean',
+            'is_active' => 'boolean',
+            'privacy_settings' => 'array',
+            'role_ids' => 'array',
         ];
     }
 }
