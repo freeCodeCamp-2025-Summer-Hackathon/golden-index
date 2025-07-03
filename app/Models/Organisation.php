@@ -58,7 +58,7 @@ class Organisation extends Model
     /**
      * The users that belong to the organisation.
      */
-    public function users(): 
+    public function users()
     {
         return $this->belongsToMany(User::class, 'users_organisations', 'organisation_id', 'user_id');
     }
