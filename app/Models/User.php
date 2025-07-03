@@ -70,4 +70,9 @@ class User extends Authenticatable implements OAuthenticatable
             'role_ids' => 'array',
         ];
     }
+
+    public function organisations()
+    {
+        return $this->belongsToMany(Organisations::class, 'users_organisations', 'organisation_id', 'user_id');
+    }
 }
