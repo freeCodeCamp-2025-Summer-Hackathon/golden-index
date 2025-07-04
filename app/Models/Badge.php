@@ -21,7 +21,9 @@ class Badge extends Model
 
     protected $casts = [
         'criteria' => 'array',
-        'points_value' => 'integer'
+        'points_value' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     protected $attributes = [
