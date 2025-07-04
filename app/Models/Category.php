@@ -13,4 +13,17 @@ class Category extends Model
         'name',
         'description',
     ];
+
+    /**
+     * Define the data type casting for model attributes.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+        ];
+    }
 }
