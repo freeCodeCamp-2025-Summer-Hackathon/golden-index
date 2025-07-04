@@ -12,11 +12,10 @@ class EventRegistration extends Model
 
     protected $table = 'event_registration';
     protected $primaryKey = 'registration_id';
-    public $timestamps = false;
     protected $keyType = 'string';
     public $incrementing = false;
 
-    protected $fillable = ['user_id', 'event_id', 'status', 'created_at', 'updated_at', 'approved_at', 'notes'];
+    protected $fillable = ['user_id', 'event_id', 'event_registration_status', 'created_at', 'updated_at', 'approved_at', 'notes'];
 
     protected $casts = [
         'created_at' => 'datetime',

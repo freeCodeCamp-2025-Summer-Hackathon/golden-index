@@ -12,7 +12,7 @@ class EventStatus extends Model
     protected $keyType = 'int';
     public $timestamps = false;
 
-    protected $fillable = ['name', 'description'];
+    protected $fillable = ['event_status_name', 'description'];
 
     public function event()
     {
