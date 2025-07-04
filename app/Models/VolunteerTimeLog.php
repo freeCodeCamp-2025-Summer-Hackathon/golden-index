@@ -15,20 +15,14 @@ class VolunteerTimeLog extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
-        'volunteer_time_log_id',
         'user_id',
         'event_id',
-        'check_in_time',
-        'check_out_time',
-        'hours_logged',
         'log_method',
-        'is_disputed',
         'dispute_reason',
         'status',
-        'created_at',
     ];
 
     
@@ -40,6 +34,7 @@ class VolunteerTimeLog extends Model
             'is_disputed' => 'boolean',
             'hours_logged' => 'decimal:2',
             'created_at' => 'datetime',
+            'updated_at' => 'datetime'
         ];
     }
 
