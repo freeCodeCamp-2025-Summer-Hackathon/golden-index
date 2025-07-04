@@ -13,8 +13,8 @@ class EventRegistration extends Model
     protected $table = 'event_registration';
     protected $primaryKey = 'registration_id';
     public $timestamps = false;
-    // protected $keyType = 'string';
-    // public $incrementing = false;
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = ['user_id', 'event_id', 'status', 'registered_at', 'approved_at', 'notes'];
 
