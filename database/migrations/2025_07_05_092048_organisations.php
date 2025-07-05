@@ -27,14 +27,6 @@ return new class extends Migration
             $table->timestamp('created_at');
             $table->timestamp('updated_at')->nullable();
         });
-
-        Schema::create('users_organisations', function (Blueprint $table) {
-            $table->uuid('user_id');
-            $table->uuid('organisation_id');
-            $table->primary(['user_id', 'organisation_id']);
-            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
-            $table->foreign('organisation_id')->references('organisation_id')->on('organisations')->onDelete('cascade');
-            });
         }
 
         /**
@@ -43,6 +35,5 @@ return new class extends Migration
         public function down(): void
         {
             Schema::dropIfExists('organisations');
-            Schema::dropIfExists('user_organisations');
         }
 };
