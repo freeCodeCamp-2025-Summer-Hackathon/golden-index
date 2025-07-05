@@ -13,6 +13,7 @@ class Organisation extends Model
 
     protected $keyType = 'string';
     public $incrementing = false;
+    protected $primaryKey = 'organisation_id';
 
     /**
      * The attributes that are mass assignable.
@@ -20,11 +21,11 @@ class Organisation extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'description',
-        'email',
-        'phone',
-        'address',
+        'organisation_name',
+        'organisation_description',
+        'organisation_email',
+        'organisation_phone',
+        'organisation_address',
         'website',
         'is_verified',
         'is_active',
