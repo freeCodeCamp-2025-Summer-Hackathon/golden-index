@@ -1,21 +1,20 @@
 <?php
-
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
-use App\Traits\HasUuid;
 
 class User extends Authenticatable implements OAuthenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, HasUuid;
 
-    protected $keyType = 'string';
+    protected $keyType   = 'string';
     public $incrementing = false;
 
     /**
@@ -59,20 +58,27 @@ class User extends Authenticatable implements OAuthenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'date_created' => 'datetime',
-            'last_login' => 'datetime',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-            'is_verified' => 'boolean',
-            'is_active' => 'boolean',
-            'privacy_settings' => 'array',
-            'role_ids' => 'array',
+            'password'          => 'hashed',
+            'date_created'      => 'datetime',
+            'last_login'        => 'datetime',
+            'created_at'        => 'datetime',
+            'updated_at'        => 'datetime',
+            'is_verified'       => 'boolean',
+            'is_active'         => 'boolean',
+            'privacy_settings'  => 'array',
+            'role_ids'          => 'array',
         ];
     }
 
     public function organisations()
     {
         return $this->belongsToMany(Organisations::class, 'users_organisations', 'organisation_id', 'user_id');
+    }
+
+    public function badges(): BelongsToMany
+    {
+        return $this->belongsToMany(Badge::class, 'user_badges', 'user_id', 'badge_id')
+            ->withPivot('earned_at', 'progress_data')
+            ->withTimestamps();
     }
 }
