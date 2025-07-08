@@ -20,13 +20,13 @@ class Event extends Model
      * @var array
      */
     protected $fillable = [
-        'organization_id',
-        'title',
-        'description',
+        'organisation_id',
+        'event_title',
+        'event_description',
         'start_datetime',
         'end_datetime',
         'location',
-        'address',
+        'event_address',
         'is_virtual',
         'max_volunteers',
         'is_urgent',
@@ -73,7 +73,7 @@ class Event extends Model
      */
     public function organization(): BelongsTo
     {
-        return $this->belongsTo(Organization::class, 'organization_id');
+        return $this->belongsTo(Organization::class, 'organisation_id');
     }
 
     /**
