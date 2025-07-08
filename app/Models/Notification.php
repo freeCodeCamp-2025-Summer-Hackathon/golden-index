@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasUuid;
 
 class Notification extends Model
 {
+    use HasUuid;
     protected $table = 'notifications';
     protected $primaryKey = 'notification_id';
 
@@ -25,6 +27,4 @@ class Notification extends Model
         'is_read' => 'boolean',
         'metadata' => 'array',
     ];
-} 
-
-?>
+}
