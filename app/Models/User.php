@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
 
 class User extends Authenticatable implements OAuthenticatable
 {
@@ -72,7 +74,7 @@ class User extends Authenticatable implements OAuthenticatable
 
     public function organisations()
     {
-        return $this->belongsToMany(Organisations::class, 'users_organisations', 'organisation_id', 'user_id');
+        return $this->belongsToMany(Organisation::class, 'users_organisations', 'user_id','organisation_id');
     }
 
     public function badges(): BelongsToMany
