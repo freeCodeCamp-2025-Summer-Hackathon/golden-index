@@ -20,7 +20,7 @@ return new class extends Migration
 
             $table->primary(['user_id', 'badge_id']);
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('badge_id')->references('badge_id')->on('badges')->onDelete('cascade');
         });
     }

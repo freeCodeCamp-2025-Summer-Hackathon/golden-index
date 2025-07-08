@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('badges', function (Blueprint $table) {
             $table->bigIncrements('badge_id');
-            $table->string('name');
-            $table->text('description')->nullable();
+            $table->string('bad_name');
+            $table->text('badge_description')->nullable();
             $table->string('icon')->nullable();
             $table->json('criteria')->nullable();
             $table->integer('points_value')->default(0);

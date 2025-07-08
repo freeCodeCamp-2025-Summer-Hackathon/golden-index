@@ -12,8 +12,8 @@ class Badge extends Model
     public $incrementing = true;
 
     protected $fillable = [
-        'name',
-        'description',
+        'badge_name',
+        'badge_description',
         'icon',
         'criteria',
         'points_value'
