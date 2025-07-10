@@ -17,6 +17,7 @@ class User extends Authenticatable implements OAuthenticatable, MustVerifyEmail
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, HasUuid;
 
+    protected $primaryKey = 'user_id';
     protected $keyType   = 'string';
     public $incrementing = false;
 
