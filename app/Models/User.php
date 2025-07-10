@@ -9,9 +9,10 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Contracts\Auth\MustVerifyEmail; 
 
 
-class User extends Authenticatable implements OAuthenticatable
+class User extends Authenticatable implements OAuthenticatable, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, HasUuid;
@@ -37,6 +38,9 @@ class User extends Authenticatable implements OAuthenticatable
         'timezone',
         'role_ids',
         'cv_file_path',
+        'date_created',
+        'last_login',
+        'verified',
     ];
 
     /**
@@ -83,4 +87,16 @@ class User extends Authenticatable implements OAuthenticatable
             ->withPivot('earned_at', 'progress_data')
             ->withTimestamps();
     }
+
+    public function getEmailAttribute(): string
+    {
+        return $this->user_email;
+    }
+
+    public function getEmailForPasswordReset()
+    {
+        return $this->user_email;
+    }
+
+
 }

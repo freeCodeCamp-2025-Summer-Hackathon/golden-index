@@ -13,16 +13,28 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('user_id')->primary();
-            $table->string('user_name');
-            $table->string('user_email')->unique();
+            $table->string('user_name', 100);
+            $table->string('user_email', 150)->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password', 255);
             $table->rememberToken();
+            $table->string('user_phone', 20)->nullable();
+            $table->timestamp('date_created')->useCurrent();
+            $table->timestamp('last_login')->nullable();
+            $table->string('user_type', 20);
+            $table->boolean('is_verified')->default(false);
+            $table->boolean('is_active')->default(true);
+            $table->string('profile_visibility', 20)->default('public');
+            $table->json('privacy_settings')->nullable();
+            $table->string('timezone', 50)->nullable();
+            $table->json('role_ids');
+            $table->text('cv_file_path')->nullable();
             $table->timestamps();
+            $table->boolean('verified')->default(false);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            $table->string('user_email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
