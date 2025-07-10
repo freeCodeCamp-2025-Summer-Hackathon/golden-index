@@ -94,6 +94,11 @@ class User extends Authenticatable implements OAuthenticatable, MustVerifyEmail
         return $this->user_email;
     }
 
+    public function getEmailForVerification()
+    {
+        return $this->user_email;
+    }
+
     public function getEmailForPasswordReset()
     {
         return $this->user_email;
