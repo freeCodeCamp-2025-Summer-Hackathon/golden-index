@@ -99,5 +99,30 @@ class User extends Authenticatable implements OAuthenticatable, MustVerifyEmail
         return $this->user_email;
     }
 
+    public function getAuthIdentifierName()
+    {
+        return 'user_email';
+    }
+
+    public function getAuthIdentifier()
+    {
+        return $this->user_email;
+    }
+
+    public function getRouteKey()
+    {
+        return $this->getKey();
+    }
+
+    public function getKey()
+    {
+        return $this->user_id;
+    }
+
+    public function getKeyName()
+    {
+        return 'user_id';
+    }
+
 
 }
