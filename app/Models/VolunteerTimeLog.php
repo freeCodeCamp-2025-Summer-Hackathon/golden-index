@@ -2,30 +2,51 @@
 
 namespace App\Models;
 
+use ApiPlatform\Metadata\ApiResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasUuid;
 
+#[ApiResource]
 class VolunteerTimeLog extends Model
 {
     use HasFactory,HasUuid;
-    protected $table = 'volunteers_time_log';
 
     protected $primaryKey = 'volunteer_time_log_id';
     public $incrementing = false;
     protected $keyType = 'string';
 
-    public $timestamps = true;
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'user_id',
         'event_id',
+        'check_in_time',
+        'check_out_time',
         'log_method',
+        'is_disputed',
+        'hours_logged',
         'dispute_reason',
-        'status',
+        'volunteer_time_log_status',
     ];
 
-    
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */    
     protected function casts(): array
     {
         return [
