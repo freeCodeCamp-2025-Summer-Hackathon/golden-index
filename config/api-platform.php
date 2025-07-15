@@ -25,7 +25,7 @@ return [
     'routes' => [
         'domain' => null,
         // Global middleware applied to every API Platform routes
-        // 'middleware' => []
+        'middleware' => ['auth:api']
     ],
 
     'resources' => [
@@ -34,6 +34,7 @@ return [
 
     'formats' => [
         'jsonld' => ['application/ld+json'],
+        'json' => ['application/json'],
         // 'jsonapi' => ['application/vnd.api+json'],
         // 'csv' => ['text/csv'],
     ],
@@ -97,23 +98,23 @@ return [
 
     'swagger_ui' => [
         'enabled' => true,
-        // 'apiKeys' => [
-        //    'api' => [
-        //        'type' => 'Bearer',
-        //        'name' => 'Authentication Token',
-        //        'in' => 'header'
-        //    ]
+        'apiKeys' => [
+           'api' => [
+               'type' => 'Bearer',
+               'name' => 'Authentication Token',
+               'in' => 'header'
+           ]
+        ],
+        // 'oauth' => [
+        //    'enabled' => true,
+        //    'type' => 'oauth2',
+        //    'flow' => 'authorizationCode',
+        //    'tokenUrl' => env('APP_URL') . '/oauth/token',
+        //    'authorizationUrl' => env('APP_URL') . '/oauth/authorize',
+        //    'refreshUrl' => env('APP_URL') . '/oauth/token',
+        //    'scopes' => ['scope1' => 'Description scope 1'],
+        //    'pkce' => true
         // ],
-         'oauth' => [
-            'enabled' => true,
-            'type' => 'oauth2',
-            'flow' => 'authorizationCode',
-            'tokenUrl' => env('APP_URL') . '/oauth/token',
-            'authorizationUrl' => env('APP_URL') . '/oauth/authorize',
-            'refreshUrl' => env('APP_URL') . '/oauth/token',
-            'scopes' => ['scope1' => 'Description scope 1'],
-            'pkce' => true
-         ],
         // 'license' => [
         //    'name' => 'Apache 2.0',
         //    'url' => 'https://www.apache.org/licenses/LICENSE-2.0.html',

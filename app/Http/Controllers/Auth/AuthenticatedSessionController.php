@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Http\JsonResponse;
+
 
 class AuthenticatedSessionController extends Controller
 {
@@ -27,12 +30,16 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse|JsonResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
+        return response()->json([
+            'authenticated' => true,
+            'user' => Auth::user(),
+        ]);
+        
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
