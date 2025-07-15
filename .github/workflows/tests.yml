@@ -18,6 +18,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Prepare SQLite Database
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -40,17 +45,12 @@ jobs:
       - name: Install Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: Prepare SQLite Database
-        run: |
-          mkdir -p database
-          touch database/database.sqlite
-
       - name: Copy Environment File
         run: cp .env.example .env
 
       - name: Generate Application Key
         run: php artisan key:generate
-        
+
       - name: Run Migrations
         run: php artisan migrate --force
 
