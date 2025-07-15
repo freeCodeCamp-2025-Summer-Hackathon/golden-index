@@ -46,5 +46,10 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
+      - name: Prepare SQLite Database
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+
       - name: Tests
         run: ./vendor/bin/pest
