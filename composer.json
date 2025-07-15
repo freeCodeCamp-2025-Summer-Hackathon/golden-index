@@ -10,12 +10,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "api-platform/laravel": "^4.1",
+        "api-platform/laravel": "*",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
-        "laravel/passport": "^13.0",
         "laravel/tinker": "^2.10.1",
-        "tightenco/ziggy": "^2.4"
+        "spatie/laravel-permission": "^6.20",
+        "tightenco/ziggy": "^2.4",
+        "tymon/jwt-auth": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
