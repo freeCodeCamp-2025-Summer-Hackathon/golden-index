@@ -1,6 +1,16 @@
 import { SelectScrollable } from '@/components/ui/select-scrollable';
-
-<SelectScrollable placeholder="Select the event you want to log your hours for:" />
+import { TimeLog } from './ui/time-log';
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 export default function VolunteerLogTimeForm() {
 
@@ -12,9 +22,36 @@ export default function VolunteerLogTimeForm() {
         { value: 'event', label: 'Animal Shelter' },
     ];
     return (
-        <div className="flex flex-col gap-4">
-            <SelectScrollable placeholder="Select the event you want to log your hours for:" items={items} />
-            {/* Additional form elements can be added here */}
-        </div>
+        <Card className="w-full max-w-sm">
+        <CardHeader>
+        <CardTitle>VolunteerMatch</CardTitle>
+        <CardDescription>
+          Log your volunteering hours here
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form>
+          <div className="flex flex-col gap-6">
+            <SelectScrollable 
+                placeholder="Select your event:" 
+                items={items} />
+                {/* Additional form elements can be added here */}
+            <div className="grid gap-2">
+              <TimeLog />
+              <TimeLog />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="comments">Status:</Label>
+              <Input id="comments" placeholder="Not revised" aria-readonly/>
+            </div>
+          </div>
+        </form>
+      </CardContent>
+      <CardFooter className="flex-col gap-2">
+        <Button type="submit" className="w-full">
+          Submit
+        </Button>
+      </CardFooter>
+    </Card>
     );
 }

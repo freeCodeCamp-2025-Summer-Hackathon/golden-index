@@ -17,7 +17,7 @@ interface SelectScrollableProps {
 export function SelectScrollable({ placeholder, items }: SelectScrollableProps) {
   return (
     <Select>
-      <SelectTrigger className="w-[380px]">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
