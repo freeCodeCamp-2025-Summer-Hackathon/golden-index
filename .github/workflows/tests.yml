@@ -51,5 +51,8 @@ jobs:
           mkdir -p database
           touch database/database.sqlite
 
+      - name: Run Migrations
+        run: php artisan migrate --force
+
       - name: Tests
         run: ./vendor/bin/pest
