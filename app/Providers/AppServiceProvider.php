@@ -4,6 +4,10 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
+use Inertia\Inertia;
+use App\Api\State\AssignUserProcessor;
+use ApiPlatform\State\ProcessorInterface;
+use ApiPlatform\Laravel\Eloquent\State\PersistProcessor;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,14 +16,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
-    }
-
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        Passport::loadKeysFrom(__DIR__.'/../secrets/oauth');
+        $this->app->when(AssignUserProcessor::class)
+        ->needs(ProcessorInterface::class)
+        ->give(PersistProcessor::class);
     }
 }
