@@ -2,7 +2,7 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
-import  VolunteerLogTimeForm from '@/components/volunteer-logtime-form';
+import  VolunteerLogTimeForm from '@/components/volunteer-logtime-form-model';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
