@@ -18,6 +18,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Prepare SQLite Database
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -45,6 +50,9 @@ jobs:
 
       - name: Generate Application Key
         run: php artisan key:generate
+
+      - name: Run Migrations
+        run: php artisan migrate --force
 
       - name: Tests
         run: ./vendor/bin/pest
