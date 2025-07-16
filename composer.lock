@@ -3924,7 +3924,6 @@
             "time": "2024-07-20T21:41:07+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "phpseclib/phpseclib",
             "version": "3.0.46",
             "source": {
@@ -4035,8 +4034,6 @@
             "time": "2025-06-26T16:29:55+00:00"
         },
         {
-=======
->>>>>>> c7bc71d9d0c84ada96908420f50eea972510d31b
             "name": "psr/cache",
             "version": "3.0.0",
             "source": {
