@@ -3653,7 +3653,6 @@
             "time": "2025-05-08T08:14:37+00:00"
         },
         {
-<<<<<<< HEAD
             "name": "paragonie/constant_time_encoding",
             "version": "v3.0.0",
             "source": {
@@ -3850,8 +3849,6 @@
             "time": "2024-10-02T11:20:13+00:00"
         },
         {
-=======
->>>>>>> c7bc71d9d0c84ada96908420f50eea972510d31b
             "name": "phpoption/phpoption",
             "version": "1.9.3",
             "source": {
