@@ -16,9 +16,18 @@ Route::post('/volunteers', function (Request $request) {
     ]);
 })->middleware('auth:api');
 
+
+// add a route for volunteer time logs-GET
+Route::post('/volunteer-time-logs', function (Request $request) {
+    return response()->json([
+        'authenticated_user_id' => $request->user()?->id,
+        'user' => $request->user(),
+    ]);
+})->middleware('auth:api');
+
 Route::post('/login', function (Request $request) {
     $credentials = $request->only('email', 'password');
-
+    
     if (! $token = JWTAuth::attempt($credentials)) {
         return response()->json(['error' => 'Unauthorized'], 401);
     }

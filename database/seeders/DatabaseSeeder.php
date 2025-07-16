@@ -18,14 +18,15 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             PermissionSeeder::class,
-            VolunteerSeeder::class
+            VolunteerSeeder::class,
+            VolunteerTimeLogSeeder::class,
         ]);
 
         User::firstOrCreate(
-            ['email' => 'shirleen@duck.com'],
+            ['email' => 'vero.mestre11@gmail.com'],
             [
-                'name' => 'Shirleen Kneppers',
-                'password' => Hash::make('F^bnYD#nb6M8oG'),
+                'name' => 'Verónica Mestre',
+                'password' => Hash::make('6RTeAnFYzNe9Evw'),
             ]
         );
     }
