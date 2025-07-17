@@ -7,8 +7,27 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use App\Traits\HasUuid;
 use ApiPlatform\Metadata\ApiResource;
+use Spatie\Permission\Traits\HasRoles;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
+use App\Contracts\BelongsToMany;
+use App\Traits\AutoAssignsUserId;
+use App\Api\State\AssignUserProcessor;
 
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(security: "is_granted('super-admin') or is_granted('organisation')"),
+        new Get(security: "is_granted('super-admin') or is_granted('organisation')"),
+        new Post(
+            security: "is_granted('super-admin') or is_granted('organisation')",
+        ),
+        new Patch(security: "is_granted('super-admin') or is_granted('organisation')"),
+        new Delete(security: "is_granted('super-admin')")
+    ]
+)]
 class Organisation extends Model
 {
     use HasFactory, Notifiable, HasUuid;
@@ -55,12 +74,12 @@ class Organisation extends Model
         return [
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
+            'is_verified' => 'boolean',
+            'is_active' => 'boolean',
+            'contact_info' => 'array',
         ];
     }
 
-    /**
-     * The users that belong to the organisation.
-     */
     public function users()
     {
         return $this->belongsToMany(User::class, 'users_organisations', 'organisation_id', 'user_id');

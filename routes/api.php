@@ -36,3 +36,11 @@ Route::get('/jwt-debug', function (Request $request) {
         'token' => $request->bearerToken(),
     ];
 })->middleware('auth:api');
+
+Route::post('/organisations', function (Request $request) {
+    return response()->json([
+        'authenticated_user_id' => $request->user()?->id,
+        'user' => $request->user(),
+    ]);
+})->middleware('auth:api');
+
