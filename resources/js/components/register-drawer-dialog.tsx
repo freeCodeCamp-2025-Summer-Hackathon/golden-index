@@ -183,6 +183,14 @@ function VolunteerForm({ className, onClose }: React.ComponentProps<"form"> & { 
         <Label htmlFor="volunteer-mobile">Mobile Number *</Label>
         <Input type="tel" id="volunteer-mobile" placeholder="+1 (555) 123-4567" required />
       </div>
+       <div className="grid gap-2">
+        <Label htmlFor="volunteer-mobile">Bio</Label>
+        <Textarea id="volunteer-bio" placeholder="Hi I'm Sam" required />
+      </div>
+       <div className="grid gap-2">
+        <Label htmlFor="volunteer-mobile">Emergency Contact Number *</Label>
+        <Input type="tel" id="volunteer-emergency-mobile" placeholder="+1 (555) 123-4567" required />
+      </div>
       <div className="grid gap-2">
         <Label htmlFor="volunteer-cv">CV/Resume (Optional)</Label>
         <Input
