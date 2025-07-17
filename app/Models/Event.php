@@ -4,7 +4,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\ApiResource;
 
+#[ApiResource( 
+    operations: [
+        new GetCollection(security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')"),
+        new Get(security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')"),
+        new Post(
+            security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')"),
+        new Patch(security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')"),
+        new Delete(security: "is_granted('super-admin')")
+    ]
+)]
 class Event extends Model
 {
     use HasFactory;
