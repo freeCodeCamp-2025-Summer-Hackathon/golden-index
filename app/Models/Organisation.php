@@ -79,10 +79,14 @@ class Organisation extends Model
             'contact_info' => 'array',
         ];
     }
-
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'users_organisations', 'organisation_id', 'user_id');
-    }
-
+    
+    
+        // public function users()
+        // {
+        //     return $this->belongsToMany(User::class, 'users_organisations', 'organisation_id', 'user_id');
+        // }
+        public function users()
+        {
+            return $this->belongsTo(User::class);
+        }
 }
