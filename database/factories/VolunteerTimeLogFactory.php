@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\VolunteerTimeLog;
 
 
 /**
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class VolunteerTimeLogFactory extends Factory
 {
+
+    protected $model = VolunteerTimeLog::class;
     /**
      * Define the model's default state.
      *
@@ -20,8 +23,8 @@ class VolunteerTimeLogFactory extends Factory
 
         return [
             'volunteer_time_log_id' => $this->faker->uuid(),
-            'user_id' => $this->faker->uuid(),
-            'event_id' => $this->faker->uuid(),
+            'user_id' => null,
+            'event_id' => null,
             'check_in_time' => now(),
             'check_out_time' => now()->addHours(2),
             'log_method' => $this->faker->randomElement(['manual', 'QRCode']),

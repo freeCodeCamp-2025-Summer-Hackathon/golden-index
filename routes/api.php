@@ -17,7 +17,10 @@ Route::post('/volunteers', function (Request $request) {
 })->middleware('auth:api');
 
 
-// add a route for volunteer time logs-GET
+Route::get('/volunteer-time-logs', function (Request $request) {
+    return $request->user();
+})->middleware('auth:api');
+
 Route::post('/volunteer-time-logs', function (Request $request) {
     return response()->json([
         'authenticated_user_id' => $request->user()?->id,
