@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->uuid('event_id')->primary();
-            $table->uuid('organization_id');
-            $table->string('title');
-            $table->text('description')->nullable();
+            $table->uuid('organisation_id');
+            $table->string('event_title');
+            $table->text('event_description')->nullable();
             $table->dateTime('start_datetime');
             $table->dateTime('end_datetime');
             $table->string('location')->nullable();
-            $table->string('address')->nullable();
+            $table->string('event_address')->nullable();
             $table->boolean('is_virtual')->default(false);
             $table->integer('max_volunteers')->nullable();
             $table->integer('current_volunteers')->default(0);
@@ -33,9 +33,9 @@ return new class extends Migration
             $table->timestamps();
 
             // Foreign keys (optional, depending on your existing tables)
-            $table->foreign('organization_id')->references('id')->on('organisations')->onDelete('cascade');
-            $table->foreign('category_id')->references('id')->on('event_categories')->onDelete('set null');
-            $table->foreign('event_status_id')->references('id')->on('event_statuses')->onDelete('set null');
+            $table->foreign('organisation_id')->references('organisationid')->on('organisations')->onDelete('cascade');
+            $table->foreign('category_id')->references('category_id')->on('event_categories')->onDelete('set null');
+            $table->foreign('event_status_id')->references('event_status_id')->on('event_statuses')->onDelete('set null');
         });
     }
 
