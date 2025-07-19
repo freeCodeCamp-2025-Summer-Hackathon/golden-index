@@ -17,11 +17,12 @@ class RoleSeeder extends Seeder
     {
         Role::firstOrCreate(['name' => 'super-admin']);
         Role::firstOrCreate(['name' => 'organisation-admin']);
+        Role::firstOrCreate(['name' => 'organisation']);
         Role::firstOrCreate(['name' => 'volunteer']);
         Role::firstOrCreate(['name' => 'event-organiser']);
         Role::firstOrCreate(['name' => 'user']);
-
-        $user = User::where('email', 'shirleen@duck.com')->first();
+        
+        $user = User::where('email', 'akanniwilliams@gmail.com')->first();
 
         if ($user) {
             $user->assignRole('super-admin');
