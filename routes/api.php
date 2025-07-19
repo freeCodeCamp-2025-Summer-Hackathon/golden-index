@@ -18,11 +18,11 @@ Route::post('/volunteers', function (Request $request) {
 })->middleware('auth:api');
 
 
-Route::get('/volunteer-time-logs', function (Request $request) {
+Route::get('/volunteer-time-log', function (Request $request) {
     return VolunteerTimeLog::all();
 })->middleware('auth:api');
 
-Route::post('/volunteer-time-logs', function (Request $request) {
+Route::post('/volunteer-time-log', function (Request $request) {
     $validated = $request->validate([
         'volunteer_time_log_id' => 'required|uuid',
         'user_id' => 'required|uuid|exists:users,id',

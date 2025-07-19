@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('volunteer_time_logs', function (Blueprint $table) {
+        Schema::create('volunteer_time_log', function (Blueprint $table) {
             $table->uuid('volunteer_time_log_id');
             $table->uuid('user_id');
             $table->uuid('event_id');
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('volunteer_time_logs');
+        Schema::dropIfExists('volunteer_time_log');
     }
 };

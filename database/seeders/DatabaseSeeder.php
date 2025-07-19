@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'vero.mestre11@gmail.com'],
             [
                 'name' => 'Verónica Mestre',
-                'password' => Hash::make('6RTeAnFYzNe9Evw'),
+                'password' => Hash::make('eCk58Uw$fL.i3m4'),
             ]
         );
     }

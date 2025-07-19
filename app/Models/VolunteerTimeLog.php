@@ -21,18 +21,20 @@ use App\Api\State\AssignUserProcessor;
         new Get(security: "is_granted('super-admin') or is_granted('volunteer')"),
         new Post(
             security: "is_granted('super-admin') or is_granted('volunteer')",
+            processor: AssignUserProcessor::class
         ),
         new Patch(security: "is_granted('super-admin') or is_granted('volunteer')"),
         new Delete(security: "is_granted('super-admin')")
     ]
 )]
-class VolunteerTimeLog extends Model
+class VolunteerTimeLog extends Model implements BelongsToUser
 {
-    use HasFactory, HasUuid, HasRoles;
+    use HasFactory, HasUuid, HasRoles, AutoAssignsUserId;
 
     protected $primaryKey = 'volunteer_time_log_id';
     public $incrementing  = false;
     protected $keyType    = 'string';
+    protected $table = 'volunteer_time_log';
 
     /**
      * The attributes that are mass assignable.
