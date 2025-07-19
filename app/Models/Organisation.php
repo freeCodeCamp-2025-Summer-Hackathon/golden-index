@@ -13,9 +13,8 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
-use App\Contracts\BelongsToMany;
+use App\Contracts\BelongsToUser;
 use App\Traits\AutoAssignsUserId;
-use App\Api\State\AssignUserProcessor;
 
 #[ApiResource(
     operations: [
@@ -28,9 +27,9 @@ use App\Api\State\AssignUserProcessor;
         new Delete(security: "is_granted('super-admin')")
     ]
 )]
-class Organisation extends Model
+class Organisation extends Model implements BelongsToUser
 {
-    use HasFactory, Notifiable, HasUuid;
+    use HasFactory, Notifiable, HasUuid, HasRoles, AutoAssignsUserId;
 
     protected $keyType = 'string';
     public $incrementing = false;
