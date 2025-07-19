@@ -63,10 +63,18 @@ Route::post('/login', function (Request $request) {
         return response()->json(['error' => 'Unauthorized'], 401);
     }
 
+    /** @var User $user */
+    $user = JWTAuth::user(); // <- This fetches the user from the token manually
+
     return response()->json([
         'access_token' => $token,
         'token_type' => 'Bearer',
-        'user' => auth('api')->user(),
+        'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'roles' => $user->getRoleNames(),
+        ],
     ]);
 });
 
