@@ -1,0 +1,6 @@
+
+In api.php line 12:
+                                                     
+  Class "ApiPlatform\Laravel\ApiPlatform" not found  
+                                                     
+
