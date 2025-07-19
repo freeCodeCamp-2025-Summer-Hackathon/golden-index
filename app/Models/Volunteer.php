@@ -53,4 +53,17 @@ class Volunteer extends Model implements BelongsToUser
     {
         return $this->belongsTo(User::class);
     }
+
+    protected static function booted(): void
+    {
+        static::created(function (Volunteer $volunteer) {
+            // Assign 'volunteer' role to the user if not already assigned
+            $user = $volunteer->user;
+        
+            if ($user && !$user->hasRole('volunteer')) {
+                $user->assignRole('volunteer');
+            }
+        });
+    }
+
 }
