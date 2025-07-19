@@ -22,12 +22,11 @@ return [
     'version' => '1.0.0',
     'show_webby' => true,
 
-    /*
     'routes' => [
         'domain' => null,
         // Global middleware applied to every API Platform routes
-        'middleware' => ['auth:api']
-    ],*/
+        //'middleware' => ['auth:api']
+    ],
 
     'resources' => [
         app_path('Models'),
