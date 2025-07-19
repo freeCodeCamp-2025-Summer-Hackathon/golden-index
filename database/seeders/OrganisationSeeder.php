@@ -19,7 +19,7 @@ class OrganisationSeeder extends Seeder
             ->count(5)
             ->create()
             ->each(function ($user) {
-                $user->assignRole('organisation-admin');
+                $user->assignRole('organisation');
                 $organisation = Organisation::factory()->create();
                 $user->organisations()->attach($organisation->organisation_id);
             });

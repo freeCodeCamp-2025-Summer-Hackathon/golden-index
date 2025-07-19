@@ -15,6 +15,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
 use App\Contracts\BelongsToUser;
 use App\Traits\AutoAssignsUserId;
+use App\Api\State\AssignOrganisationUserProcessor;
 
 #[ApiResource(
     operations: [
@@ -22,6 +23,7 @@ use App\Traits\AutoAssignsUserId;
         new Get(security: "is_granted('super-admin') or is_granted('organisation')"),
         new Post(
             security: "is_granted('super-admin') or is_granted('organisation')",
+            processor: AssignOrganisationUserProcessor::class
         ),
         new Patch(security: "is_granted('super-admin') or is_granted('organisation')"),
         new Delete(security: "is_granted('super-admin')")
@@ -84,8 +86,4 @@ class Organisation extends Model implements BelongsToUser
         {
             return $this->belongsToMany(User::class, 'users_organisations', 'organisation_id', 'user_id');
         }
-        // public function users()
-        // {
-        //     return $this->belongsTo(User::class);
-        // }
 }
