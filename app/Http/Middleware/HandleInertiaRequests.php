@@ -6,6 +6,7 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -48,6 +49,7 @@ class HandleInertiaRequests extends Middleware
                     ...$request->user()->toArray(),
                     'roles' => $request->user()->getRoleNames()->toArray(),
                 ] : null,
+                 'token' => $request->user() ? JWTAuth::fromUser($request->user()) : null,
             ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),

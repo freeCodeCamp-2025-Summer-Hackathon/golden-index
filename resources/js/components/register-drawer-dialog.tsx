@@ -9,15 +9,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { cn } from '@/lib/utils';
+import { SharedData } from '@/types';
+import { usePage } from '@inertiajs/react';
 import { ArrowLeft, Building2, Users } from 'lucide-react';
 import * as React from 'react';
+import { toast } from 'sonner';
 
 type UserType = 'volunteer' | 'organization' | null;
 
 export default function RegisterDrawerDialog() {
+    const { auth } = usePage<SharedData>().props;
     const [open, setOpen] = React.useState(true); // Auto-open the dialog
     const [userType, setUserType] = React.useState<UserType>(null);
     const isDesktop = useMediaQuery('(min-width: 768px)');
+
+    console.log(auth.token, 'rishan token');
 
     const handleClose = () => {
         setOpen(false);
@@ -131,40 +137,116 @@ function UserTypeSelection({ onSelect }: { onSelect: (type: UserType) => void })
     );
 }
 
-function VolunteerForm({ className, onClose }: React.ComponentProps<'form'> & { onClose?: () => void }) {
-    const handleSubmit = (e: React.FormEvent) => {
+function VolunteerForm({ className }: React.ComponentProps<'form'> & { onClose?: () => void }) {
+    const { auth } = usePage<SharedData>().props;
+    const [bio, setBio] = React.useState('');
+    const [skills, setSkills] = React.useState('');
+    const [experience, setExperience] = React.useState('none');
+    const [availability, setAvailability] = React.useState('weekends');
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [error, setError] = React.useState<string | null>(null);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle volunteer form submission
-        console.log('Volunteer form submitted');
-        onClose?.();
+        setIsSubmitting(true);
+        setError(null);
+
+        try {
+            const token = auth.token;
+
+            if (!token) {
+                throw new Error('Authentication token not available');
+            }
+
+            // Prepare volunteer data according to requirements
+            const volunteerData = {
+                onboarding_status: 'pending',
+                bio: bio || 'sample bio',
+                skills: skills ? skills.split(',').map((skill) => skill.trim()) : ['skill1', 'skill2'],
+                experience,
+                availability,
+            };
+
+            // Submit volunteer registration to /api/volunteers route
+            const response = await fetch('/api/volunteers', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(volunteerData),
+            });
+
+            let responseData;
+            try {
+                responseData = await response.json();
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            } catch (parseError) {
+                throw new Error('Server returned invalid response. Please try again.');
+            }
+
+            if (!response.ok) {
+                throw new Error(responseData.error || responseData.message || 'Failed to register as volunteer');
+            }
+
+            console.log('Volunteer registration successful');
+            // Refresh the page to update user roles and hide the dialog
+            window.location.reload();
+            toast('Volunteer registration successful');
+        } catch (error) {
+            console.error('Error registering volunteer:', error);
+            setError(error instanceof Error ? error.message : 'Failed to register as volunteer. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
         <form className={cn('grid items-start gap-4', className)} onSubmit={handleSubmit}>
+            {error && <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-900/20 dark:text-red-200">{error}</div>}
             <div className="grid gap-2">
-                <Label htmlFor="volunteer-mobile">Mobile Number *</Label>
-                <Input type="tel" id="volunteer-mobile" placeholder="+1 (555) 123-4567" required />
+                <Label htmlFor="volunteer-bio">Bio</Label>
+                <Textarea id="volunteer-bio" placeholder="Tell us about yourself..." value={bio} onChange={(e) => setBio(e.target.value)} />
             </div>
             <div className="grid gap-2">
-                <Label htmlFor="volunteer-mobile">Bio</Label>
-                <Textarea id="volunteer-bio" placeholder="Hi I'm Sam" required />
-            </div>
-            <div className="grid gap-2">
-                <Label htmlFor="volunteer-mobile">Emergency Contact Number *</Label>
-                <Input type="tel" id="volunteer-emergency-mobile" placeholder="+1 (555) 123-4567" required />
-            </div>
-            <div className="grid gap-2">
-                <Label htmlFor="volunteer-cv">CV/Resume (Optional)</Label>
+                <Label htmlFor="volunteer-skills">Skills (comma-separated)</Label>
                 <Input
-                    type="file"
-                    id="volunteer-cv"
-                    accept=".pdf,.doc,.docx"
-                    className="file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-foreground hover:file:bg-primary/80"
+                    id="volunteer-skills"
+                    placeholder="e.g., Teaching, Cooking, Event Planning"
+                    value={skills}
+                    onChange={(e) => setSkills(e.target.value)}
                 />
-                <p className="text-xs text-muted-foreground">Accepted formats: PDF, DOC, DOCX (Max 5MB)</p>
             </div>
-            <Button type="submit" className="w-full">
-                Register as Volunteer
+            <div className="grid gap-2">
+                <Label htmlFor="volunteer-experience">Experience Level</Label>
+                <Select value={experience} onValueChange={setExperience}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select experience level" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="none">No Experience</SelectItem>
+                        <SelectItem value="beginner">Beginner</SelectItem>
+                        <SelectItem value="intermediate">Intermediate</SelectItem>
+                        <SelectItem value="advanced">Advanced</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+            <div className="grid gap-2">
+                <Label htmlFor="volunteer-availability">Availability</Label>
+                <Select value={availability} onValueChange={setAvailability}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select availability" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="weekdays">Weekdays</SelectItem>
+                        <SelectItem value="weekends">Weekends</SelectItem>
+                        <SelectItem value="evenings">Evenings</SelectItem>
+                        <SelectItem value="flexible">Flexible</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? 'Registering...' : 'Register as Volunteer'}
             </Button>
         </form>
     );
