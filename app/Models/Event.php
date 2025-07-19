@@ -73,7 +73,7 @@ class Event extends Model
      */
     public function organization(): BelongsTo
     {
-        return $this->belongsTo(Organization::class, 'organisation_id');
+        return $this->belongsTo(Organisation::class, 'organisation_id');
     }
 
     /**
@@ -81,7 +81,7 @@ class Event extends Model
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(EventCategory::class, 'category_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     /**

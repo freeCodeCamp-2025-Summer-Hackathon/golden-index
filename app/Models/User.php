@@ -4,15 +4,16 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\Contracts\OAuthenticatable;
-use Laravel\Passport\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements OAuthenticatable
+class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable, HasUuid;
+    use HasFactory, Notifiable, HasUuid, HasRoles;
 
     protected $keyType   = 'string';
     public $incrementing = false;
@@ -72,7 +73,7 @@ class User extends Authenticatable implements OAuthenticatable
 
     public function organisations()
     {
-        return $this->belongsToMany(Organisations::class, 'users_organisations', 'organisation_id', 'user_id');
+        return $this->belongsToMany(Organisation::class, 'users_organisations', 'user_id', 'organisation_id', );
     }
 
     public function badges(): BelongsToMany
@@ -80,5 +81,18 @@ class User extends Authenticatable implements OAuthenticatable
         return $this->belongsToMany(Badge::class, 'user_badges', 'user_id', 'badge_id')
             ->withPivot('earned_at', 'progress_data')
             ->withTimestamps();
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function getJWTIdentifier() {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims() {
+        return [];
     }
 }
