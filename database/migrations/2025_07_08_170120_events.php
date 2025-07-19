@@ -26,16 +26,16 @@ return new class extends Migration
             $table->boolean('is_urgent')->default(false);
             $table->string('recurrence_pattern')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
-            $table->unsignedBigInteger('event_status_id')->nullable();
+            $table->unsignedBigInteger('event_status_id')->nullable()->default(1); // Assuming 1 is the default status ID
             $table->boolean('is_high_risk')->default(false);
             $table->boolean('is_group_friendly')->default(false);
             $table->json('required_skills')->nullable();
             $table->timestamps();
 
             // Foreign keys (optional, depending on your existing tables)
-            $table->foreign('organisation_id')->references('organisationid')->on('organisations')->onDelete('cascade');
-            $table->foreign('category_id')->references('category_id')->on('event_categories')->onDelete('set null');
-            $table->foreign('event_status_id')->references('event_status_id')->on('event_statuses')->onDelete('set null');
+            $table->foreign('organisation_id')->references('organisation_id')->on('organisations')->onDelete('cascade');
+            $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('set null');
+            $table->foreign('event_status_id')->references('event_status_id')->on('event_status')->onDelete('set null');
         });
     }
 

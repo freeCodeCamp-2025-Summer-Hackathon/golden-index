@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Event;
-use App\Models\EventStatus;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class EventSeeder extends Seeder
 {
@@ -16,13 +16,13 @@ class EventSeeder extends Seeder
      */
     public function run(): void
     {
-        $statuses = [
-            ['event_status_id' => 1, 'event_status_name' => 'upcoming', 'description' => 'Event is scheduled to happen in the future'],
-            ['event_status_id' => 2, 'event_status_name' => 'ongoing', 'description' => 'Event is currently happening'],
-            ['event_status_id' => 3, 'event_status_name' => 'completed', 'description' => 'Event has already taken place'],
-            ['event_status_id' => 4, 'event_status_name' => 'cancelled', 'description' => 'Event has been cancelled'],
-        ];
-        EventStatus::insert($statuses);
+         // Optional: disable foreign key checks temporarily (ONLY while events table is not seeded)
+        DB::statement('PRAGMA foreign_keys = OFF');
+
+        // Create events
         Event::factory()->count(50)->create();
+
+        // Re-enable foreign key checks
+        DB::statement('PRAGMA foreign_keys = ON');
     }
 }

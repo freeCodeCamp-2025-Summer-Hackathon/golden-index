@@ -25,7 +25,7 @@ class Event extends Model
 {
     use HasFactory;
 
-    
+    protected $table = 'events';
     protected $primaryKey = 'event_id';
     protected $keyType = 'uuid';
     public $incrementing = false;
@@ -103,9 +103,9 @@ class Event extends Model
     /**
      * Get the event status.
      */
-    public function status(): BelongsTo
+    public function eventStatus(): BelongsTo
     {
-        return $this->belongsTo(EventStatus::class, 'event_status_id');
+        return $this->belongsTo(EventStatus::class, 'event_status_id', 'event_status_id');
     }
 
     /**
