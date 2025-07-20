@@ -18,7 +18,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             PermissionSeeder::class,
-            VolunteerSeeder::class
+            VolunteerSeeder::class,
+            OrganisationSeeder::class,,
+            EventStatusSeeder::class,
+            EventSeeder::class,,
+            VolunteerTimeLogSeeder::class,
         ]);
 
         User::firstOrCreate(
