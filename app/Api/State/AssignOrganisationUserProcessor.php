@@ -26,16 +26,16 @@ class AssignOrganisationUserProcessor implements ProcessorInterface
         }
 
         // If user already has organisation role, reject the creation request
-        if ($user->hasRole('organisation')) {
-            // Log::info('User already has organisation role; preventing duplicate organisation creation.');
-            throw new \Exception('User is already an organisation.');
-        }
+        // if ($user->hasRole('organisation')) {
+        //     // Log::info('User already has organisation role; preventing duplicate organisation creation.');
+        //     throw new \Exception('User is already an organisation.');
+        // }
 
         // Otherwise, create organisation and assign role
         try {
             $organisation = $this->persistProcessor->process($data, $operation, $uriVariables, $context);
 
-            $user->assignRole('organisation');
+            $user->assignRole('organisation-admin');
 
             $organisation->users()->syncWithoutDetaching([$user->id]);
 

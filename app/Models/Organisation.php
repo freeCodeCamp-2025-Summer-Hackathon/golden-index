@@ -19,13 +19,13 @@ use App\Api\State\AssignOrganisationUserProcessor;
 
 #[ApiResource(
     operations: [
-        new GetCollection(security: "is_granted('super-admin') or is_granted('organisation')"),
-        new Get(security: "is_granted('super-admin') or is_granted('organisation')"),
+        new GetCollection(security: "is_granted('super-admin') or is_granted('organisation-admin')"),
+        new Get(security: "is_granted('super-admin') or is_granted('organisation-admin')"),
         new Post(
-            security: "is_granted('super-admin') or is_granted('organisation')",
+            security: "is_granted('super-admin') or is_granted('organisation-admin')",
             processor: AssignOrganisationUserProcessor::class
         ),
-        new Patch(security: "is_granted('super-admin') or is_granted('organisation')"),
+        new Patch(security: "is_granted('super-admin') or is_granted('organisation-admin')"),
         new Delete(security: "is_granted('super-admin')")
     ]
 )]
