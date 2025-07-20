@@ -23,10 +23,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::firstOrCreate(
-            ['email' => 'vero.mestre11@gmail.com'],
+            ['email' => 'shirleen@duck.com'],
             [
-                'name' => 'Verónica Mestre',
-                'password' => Hash::make('eCk58Uw$fL.i3m4'),
+                'name' => 'Shirleen Kneppers',
+                'password' => Hash::make('F^bnYD#nb6M8oG'),
             ]
         );
     }
