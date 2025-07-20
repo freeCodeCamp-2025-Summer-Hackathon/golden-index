@@ -1,5 +1,4 @@
 import RegisterDrawerDialog from '@/components/register-drawer-dialog';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import { EventCard, EventType } from '@/components/events-card';
 import AppLayout from '@/layouts/app-layout';
 import { Head, usePage } from '@inertiajs/react';
