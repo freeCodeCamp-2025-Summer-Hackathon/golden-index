@@ -16,10 +16,12 @@ class OrganisationSeeder extends Seeder
     public function run(): void
     {
         User::factory()
+            ->organisationAdmin()
             ->count(5)
             ->create()
             ->each(function ($user) {
-                $user->assignRole('organisation');
+                $user->assignRole('organisation-admin');
+
                 $organisation = Organisation::factory()->create();
                 $user->organisations()->attach($organisation->organisation_id);
             });
