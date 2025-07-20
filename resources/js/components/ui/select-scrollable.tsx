@@ -3,32 +3,37 @@ import * as React from "react"
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
 
+import { Label } from "@/components/ui/label"
+
 interface SelectScrollableProps {
   placeholder: string;
   items?: { value: string; label: string }[];
+  value?: string;
+  onChange?: (value: string) => void;
 }
 
-export function SelectScrollable({ placeholder, items }: SelectScrollableProps) {
+export function SelectScrollable({ placeholder, items, value, onChange }: SelectScrollableProps) {
   return (
-    <Select>
+    <>
+    <Label htmlFor="select-scrollable">{placeholder}</Label>
+    <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="w-full">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        <SelectGroup>
           {items?.map((item) => (
-            <SelectItem key={item.value} value={item.value}>
+            <SelectItem value={item.value}>
               {item.label}
             </SelectItem>
           ))}
-        </SelectGroup>
       </SelectContent>
     </Select>
+    </>
   )
 }
+
