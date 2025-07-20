@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('website')->nullable();
             $table->boolean('is_verified')->default(false);
             $table->boolean('is_active')->default(true);
-            $table->json('contact_info')->nullable();
+            $table->text('contact_info')->nullable();
             $table->text('mission_statement')->nullable();
             $table->string('org_type');
             $table->timestamp('created_at');

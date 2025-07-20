@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Models\Organisation;
 use App\Models\Event;
 
 
@@ -92,3 +93,25 @@ Route::get('/jwt-debug', function (Request $request) {
         'token' => $request->bearerToken(),
     ];
 })->middleware('auth:api');
+
+Route::post('/organisations', function (Request $request) {
+    $validate = $request->validate([
+        'organisation_name' => 'required|string',
+        'organisation_description' => 'nullable|string',
+        'organisation_email' => 'required|email|unique:organisations,organisation_email',
+        'organisation_phone' => 'nullable|string',
+        'organisation_address' => 'nullable|string',
+        'website' => 'nullable|url',
+        'contact_info' => 'nullable|array',
+        'mission_statement' => 'nullable|string',
+        'org_type' => 'required|string',
+    ]);
+    $organisation = Organisation::create($validate);
+
+    return response()->json($organisation, 201);
+})->middleware('auth:api');
+
+Route::get('/organisations', function (Request $request) {
+    return Organisation::all();
+})->middleware('auth:api');
+

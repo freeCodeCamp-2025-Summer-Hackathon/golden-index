@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             PermissionSeeder::class,
             VolunteerSeeder::class,
+            OrganisationSeeder::class,,
             EventStatusSeeder::class,
             EventSeeder::class,
         ]);
