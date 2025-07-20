@@ -70,20 +70,16 @@ class Organisation extends Model implements BelongsToUser
      *
      * @return array<string, string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'is_verified' => 'boolean',
+        'is_active' => 'boolean',
+        'contact_info' => 'array',
+    ];
+
+    public function users()
     {
-        return [
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-            'is_verified' => 'boolean',
-            'is_active' => 'boolean',
-            'contact_info' => 'array',
-        ];
-    }
-    
-    
-        public function users()
-        {
-            return $this->belongsToMany(User::class, 'users_organisations', 'organisation_id', 'user_id');
+        return $this->belongsToMany(User::class, 'users_organisations', 'organisation_id', 'user_id');
         }
 }

@@ -57,14 +57,9 @@ Route::post('/organisations', function (Request $request) {
         'mission_statement' => 'nullable|string',
         'org_type' => 'required|string',
     ]);
-    try {
-        $organisation = Organisation::create($validate);
+    $organisation = Organisation::create($validate);
 
     return response()->json($organisation, 201);
-    }
-    catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
 })->middleware('auth:api');
 
 Route::get('/organisations', function (Request $request) {
