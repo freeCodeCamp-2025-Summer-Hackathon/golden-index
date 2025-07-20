@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('organisations', function (Blueprint $table) {
-            $table->uuid('organisation_id');
+            $table->uuid('organisation_id')->primary();
             $table->string('organisation_name');
             $table->text('organisation_description')->nullable();
             $table->string('organisation_email')->unique();
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('website')->nullable();
             $table->boolean('is_verified')->default(false);
             $table->boolean('is_active')->default(true);
-            $table->json('contact_info')->nullable();
+            $table->text('contact_info')->nullable();
             $table->text('mission_statement')->nullable();
             $table->string('org_type');
             $table->timestamp('created_at');
