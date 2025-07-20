@@ -25,11 +25,10 @@ return [
     'routes' => [
         'domain' => null,
         // Global middleware applied to every API Platform routes
-backend-event-registration-api
+
         // 'middleware' => ['auth:api']
 
       
-main
     ],
 
     'resources' => [
