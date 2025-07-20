@@ -1,7 +1,9 @@
+import RegisterDrawerDialog from '@/components/register-drawer-dialog';
+import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import { EventCard, EventType } from '@/components/events-card';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
+import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, MapPin, Users, Info } from "lucide-react";
@@ -133,23 +135,24 @@ function getEvents(): EventType[] {
 export default function Dashboard() {
   const allEvents = getEvents();
   const now = new Date();
-
   const defaultUpcomingEvent = allEvents
     .filter((event) => new Date(event.start_datetime) > now)
     .sort((a, b) => new Date(a.start_datetime).getTime() - new Date(b.start_datetime).getTime())[0];
-
   const [selectedEvent, setSelectedEvent] = useState<EventType | null>(defaultUpcomingEvent || null);
-
   useEffect(() => {
     if (!selectedEvent && defaultUpcomingEvent) {
       setSelectedEvent(defaultUpcomingEvent);
     }
   }, [defaultUpcomingEvent, selectedEvent]);
 
-  return (
-    <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Dashboard" />
-      <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+    const { auth } = usePage<SharedData>().props;
+    // Check if user has only the 'user' role with safety checks
+    const shouldShowRegisterDialog = auth.user?.roles?.length === 1 && auth.user.roles[0] === 'user';
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Dashboard" />
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+                {shouldShowRegisterDialog && <RegisterDrawerDialog />}
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-transparent">
           {allEvents.map((event) => (
             <EventCard key={event.event_id} event={event} onClick={setSelectedEvent} />
@@ -192,11 +195,11 @@ export default function Dashboard() {
                     </span>
                   </div>
                   <div className="flex items-center justify-center md:justify-start gap-2">
-                    <MapPin className="size-4 text-muted-foreground" />
                     <span>{selectedEvent.is_virtual ? "Virtual Event" : selectedEvent.location}</span>
+                    <MapPin className="size-4 text-muted-foreground" />
                   </div>
-                  <div className="flex items-center justify-center md:justify-start gap-2">
                     <Users className="size-4 text-muted-foreground" />
+                  <div className="flex items-center justify-center md:justify-start gap-2">
                     <span>
                       {selectedEvent.current_volunteers}
                       {selectedEvent.max_volunteers ? ` / ${selectedEvent.max_volunteers}` : ""} volunteers

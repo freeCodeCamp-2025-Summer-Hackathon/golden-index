@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Models;
-
+use ApiPlatform\Metadata\ApiResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\HasUuid;
 
+#[ApiResource]
 class EventRegistration extends Model
 {
     use HasUuid;
@@ -39,3 +40,5 @@ class EventRegistration extends Model
         return $this->belongsTo(Event::class, 'event_id', 'event_id');
     }
 }
+
+
