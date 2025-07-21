@@ -41,4 +41,12 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    public function organisationAdmin()
+    {
+        return $this->state(fn () => [
+            'name' => 'Org Admin',
+            'email' => $this->faker->unique()->safeEmail(),
+            ]);
+        }
 }

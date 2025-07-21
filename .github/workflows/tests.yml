@@ -51,6 +51,10 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
+        # Add JWT secret generation
+      - name: Generate JWT Secret
+        run: php artisan jwt:secret --force
+
       - name: Run Migrations
         run: php artisan migrate --force
 
