@@ -20,9 +20,9 @@ Route::post('/volunteers', function (Request $request) {
 })->middleware('auth:api');
 
 //Added GET and POST routes for Events
-Route::get('/event', function (Request $request) {
-    return Event::all();
-})->middleware('auth:api');
+//Route::get('/event', function (Request $request) {
+//    return Event::all();
+//})->middleware('auth:api');
 
 Route::post('/event', function (Request $request) {
 
@@ -67,9 +67,9 @@ Route::post('/event', function (Request $request) {
 
 
 
-Route::get('/volunteer-time-log', function (Request $request) {
-    return VolunteerTimeLog::all();
-})->middleware('auth:api');
+//Route::get('/volunteer-time-log', function (Request $request) {
+//    return VolunteerTimeLog::all();
+//})->middleware('auth:api');
 
 Route::post('/volunteer-time-log', function (Request $request) {
     $validated = $request->validate([
