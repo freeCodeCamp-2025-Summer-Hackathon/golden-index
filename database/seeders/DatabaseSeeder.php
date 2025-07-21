@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             EventStatusSeeder::class,
             EventSeeder::class,
             VolunteerTimeLogSeeder::class,
+            EventRegistrationSeeder::class,
         ]);
 
         User::firstOrCreate(

@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use ApiPlatform\Metadata\ApiResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +11,7 @@ use App\Traits\HasUuid;
 #[ApiResource]
 class EventRegistration extends Model
 {
+    use HasFactory;
     use HasUuid;
 
     protected $table = 'event_registration';
