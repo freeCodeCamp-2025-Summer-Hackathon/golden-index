@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('volunteer_time_log', function (Blueprint $table) {
-            $table->uuid('volunteer_time_log_id');
+            $table->uuid('volunteer_time_log_id')->primary();
             $table->uuid('user_id');
             $table->uuid('event_id');
             $table->timestamp('check_in_time')->nullable();
@@ -25,8 +25,8 @@ return new class extends Migration
             $table->timestamp('created_at');
             $table->timestamp('updated_at')->nullable();
 
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('event_id')->references('event_id')->on('events');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('event_id')->references('event_id')->on('events')->onDelete('cascade');
         });
     }
 
