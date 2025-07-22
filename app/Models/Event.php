@@ -10,24 +10,31 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiResource;
+use App\Contracts\BelongsToUser;
+use App\Traits\AutoAssignsUserId;
+use App\Api\State\AssignUserProcessor;
+use App\Api\State\AssignOrganisationUserProcessor;
+use App\Traits\HasUuid;
+use Spatie\Permission\Traits\HasRoles;
 
 #[ApiResource( 
     operations: [
         new GetCollection(security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')"),
         new Get(security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')"),
         new Post(
-            security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')"),
+            security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')",
+            processor: AssignUserProcessor::class),
         new Patch(security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')"),
         new Delete(security: "is_granted('super-admin')")
     ]
 )]
 class Event extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuid, HasRoles, AutoAssignsUserId;
 
     protected $table = 'events';
     protected $primaryKey = 'event_id';
-    protected $keyType = 'uuid';
+    protected $keyType = 'string';
     public $incrementing = false;
 
     /**

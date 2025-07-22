@@ -214,14 +214,14 @@ export default function EventCreationForm({ className }: React.ComponentProps<'f
                 onChange={(e) => setMaxVolunteers(e.target.value === '' ? null : Number(e.target.value))}
               />
             </div>
-             <div className="grid gap-2">
+             {/*<div className="grid gap-2">
               <Label htmlFor="event-skills">Required Skills</Label>
               <Input
                 id="event-skills"
                 type="text"
                 value={eventSkills}
                 onChange={(e) => setEventSkills(e.target.value)}
-              />
+              />*/}
             </div>
             <Label>Is the event virtual?</Label>
             <Select
@@ -278,9 +278,7 @@ export default function EventCreationForm({ className }: React.ComponentProps<'f
                   <SelectItem value="true">Yes</SelectItem>
                   <SelectItem value="false">No</SelectItem>
                 </SelectContent>
-            </Select>
-          </div>
-        
+            </Select>        
       </CardContent>
       <CardFooter className="flex-col gap-2">
         <Button type="submit" className="w-full" disabled={isSubmitting}>
