@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label"
 import React, { useState, useEffect } from 'react';
 import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
-import { useMediaQuery } from '@/hooks/use-media-query';
+//import { useMediaQuery } from '@/hooks/use-media-query';
 import { EventType } from './events-card'; // Adjust the import path as necessary
 
 // Define the structure of the volunteer time log data
@@ -32,7 +32,7 @@ export default function VolunteerLogTimeForm({ className }: React.ComponentProps
   //Extract auth info (including token) from the global page props via Inertia.js
   const { auth } = usePage<SharedData>().props;
   //Use a custom hook to determine if the screen size is desktop or mobile
-  const isDesktop = useMediaQuery('(min-width: 768px)');
+  //const isDesktop = useMediaQuery('(min-width: 768px)');
 
     const [selectedEvent, setSelectedEvent] = useState("");
      const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -98,17 +98,12 @@ if (hoursLogged <= 0) {
 
       // Prepare data object, parse skills into array, fallback with defaults if empty
       const volunteerTimeLogData = {
-        user_id: auth.user.id,
-        event_id: selectedEvent,
-        check_in_time: start.toISOString(),
-        check_out_time: end.toISOString(),
-        hours_logged: hoursLogged,
-        log_method: 'manual', // Assuming manual log method for this example
-        dispute_reason: null,
-        volunteer_time_log_status: 'pending',
-        is_disputed: false,
-        created_at: new Date().toISOString(),
-        updated_at: null
+        eventId: selectedEvent,
+        checkInTime: start.toISOString(),
+        checkOutTime: end.toISOString(),
+        hoursLogged: hoursLogged.toString(), // Convert to string with 2 decimal places
+        logMethod: 'manual', // Assuming manual log method for this example
+        volunteerTimeLogStatus: 'pending',
       };
 
       console.log('Volunteer Time Log Data:', volunteerTimeLogData);
