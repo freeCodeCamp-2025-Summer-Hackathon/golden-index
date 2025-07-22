@@ -15,52 +15,37 @@ import { Label } from "@/components/ui/label"
 import React, { useState, useEffect } from 'react';
 import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
+import { Textarea } from '@/components/ui/textarea';
 //import { useMediaQuery } from '@/hooks/use-media-query';
-import { EventType } from './events-card'; // Adjust the import path as necessary
 
 export default function EventCreationForm({ className }: React.ComponentProps<'form'> & { onClose?: () => void }) {
 
   //Extract auth info (including token) from the global page props via Inertia.js
   const { auth } = usePage<SharedData>().props;
+  //console.log('Auth data:', auth);
   //Use a custom hook to determine if the screen size is desktop or mobile
   //const isDesktop = useMediaQuery('(min-width: 768px)');
 
-    const [selectedEvent, setSelectedEvent] = useState("");
-     const [isSubmitting, setIsSubmitting] = React.useState(false);
-     const [error, setError] = React.useState<string | null>(null);
-     const [checkInTime, setCheckInTime] = useState('');
-     const [checkOutTime, setCheckOutTime] = useState('');
-     const [events, setEvents] = useState<EventType[]>([]);
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [error, setError] = React.useState<string | null>(null);
+    const [startDateTime, setStartDateTime] = useState('');
+    const [endDateTime, setEndDateTime] = useState('');
+    const [eventTitle, setEventTitle] = useState('');
+    const [eventDescription, setEventDescription] = useState('');
+    const [location, setLocation] = useState('');
+    const [eventAddress, setEventAddress] = useState('');
+    const [isVirtual, setIsVirtual] = useState(false);
+    const [maxVolunteers, setMaxVolunteers] = useState<number | null>(null);
+    const [isUrgent, setIsUrgent] = useState(false);
+    const [recurrencePattern, setRecurrencePattern] = useState('');
+    const [isHighRisk, setIsHighRisk] = useState(false);
+    const [isGroupFriendly, setIsGroupFriendly] = useState(false);
+    const [requiredSkills, setRequiredSkills] = useState<string[]>([]);
 
      useEffect(() => {
-    // Fetch events from the API
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch('api/events', {
-          headers: {
-            'Authorization': `Bearer ${auth.token}`,
-            'Content-Type': 'application/json',
-          }
-        });
-        if (!response.ok) throw new Error('Failed to fetch events');
-
-        const data: EventsResponse = await response.json();
-        setEvents(data.member || []);
-        // console.log('useEffect data:', data.member);
-        // console.log('Events count:', events.length);
-      } catch (error) {
-        console.error('Error fetching events:', error);
-        setEvents([]); // Reset events on error
-      }
-      }
-    fetchEvents();
+        
     }, []);
     
-    // useEffect(() => {
-    //   if (events.length > 0) {
-    //     console.log('data2:', events);
-    //   }
-    // }, [events]);
    // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,38 +56,26 @@ export default function EventCreationForm({ className }: React.ComponentProps<'f
       const token = auth.token;
       if (!token) throw new Error('Authentication token not available');
 
-      const start = new Date(checkInTime);
-      console.log('Check-in time:', start);
-      const end = new Date(checkOutTime);
-      console.log('Check-out time:', end);
 
-if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-  throw new Error('Invalid check-in or check-out time');
-}
-
-const durationMs = end.getTime() - start.getTime();
-const hoursLogged = durationMs / (1000 * 60 * 60); // convert ms to hours
-
-if (hoursLogged <= 0) {
-  throw new Error('Check-out must be after check-in');
-}
 
       // Prepare data object, parse skills into array, fallback with defaults if empty
-      const volunteerTimeLogData = {
-        user_id: auth.user.id,
-        event_id: selectedEvent,
-        check_in_time: start.toISOString(),
-        check_out_time: end.toISOString(),
-        hours_logged: hoursLogged,
-        log_method: 'manual', // Assuming manual log method for this example
-        dispute_reason: null,
-        volunteer_time_log_status: 'pending',
-        is_disputed: false,
-        created_at: new Date().toISOString(),
-        updated_at: null
+      const eventData = {
+        eventTitle: eventTitle,
+        eventDescription: eventDescription,
+        startDateTime: new Date(startDateTime).toISOString(),
+        endDateTime: new Date(endDateTime).toISOString(),
+        location: location,
+        eventAddress: eventAddress,
+        isVirtual: isVirtual,
+        maxVolunteers: maxVolunteers,
+        isUrgent: isUrgent,
+        recurrencePattern: recurrencePattern,
+        isHighRisk: isHighRisk,
+        isGroupFriendly: isGroupFriendly,
+        requiredSkills: requiredSkills.length > 0 ? requiredSkills : ['none'], // Fallback to 'none' if no skills are selected
       };
 
-      console.log('Volunteer Time Log Data:', volunteerTimeLogData);
+      console.log('Event Data:', eventData);
 
       // Send POST request to register volunteer time log
       const response = await fetch('/api/volunteer_time_logs', {
@@ -111,7 +84,7 @@ if (hoursLogged <= 0) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(volunteerTimeLogData),
+        body: JSON.stringify(eventData),
       });
 
       // Attempt to parse JSON response safely
@@ -157,60 +130,161 @@ if (hoursLogged <= 0) {
       </CardHeader>
       <CardContent> 
           <div className="flex flex-col gap-6">
-            <Label>Select an Event</Label>
+            <div className="grid gap-2">
+              <Label htmlFor="event-title">Event Title</Label>
+              <Input
+                id="event-title"
+                type="text"
+                value={eventTitle}
+                onChange={(e) => setEventTitle(e.target.value)}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="event-description">Event Description</Label>
+              <Textarea
+                id="event-description"
+                value={eventDescription}
+                onChange={(e) => setEventDescription(e.target.value)}  
+              />
+            </div>
+            <Label>How often do you want to hold this event?</Label>
             <Select
-              value={selectedEvent}
-              onValueChange={setSelectedEvent}
+              value={recurrencePattern}
+              onValueChange={setRecurrencePattern}
               required
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select event" />
-              </SelectTrigger>
+            <SelectTrigger>
+                <SelectValue placeholder="Select frequency" />
+            </SelectTrigger>
               <SelectContent>
-              {/* {console.log('Events:', events)} */}
-              {events.length > 0 &&
-                events.map(event => (
-                  <SelectItem key={event.eventId} value={event.eventId}>
-                    {event.eventTitle}
-                  </SelectItem>
-                )) 
-              }
+              <SelectItem value="one-time">One Time</SelectItem>
+              <SelectItem value="daily">Daily</SelectItem>
+              <SelectItem value="weekly">Weekly</SelectItem>
+              <SelectItem value="monthly">Monthly</SelectItem>
+              <SelectItem value="yearly">Yearly</SelectItem>
           </SelectContent>
         </Select>
-          {/* {console.log('data2:', events.member)} */}
             <div className="grid gap-2">
-              <Label htmlFor="check-in">Check In Time</Label>
+              <Label htmlFor="check-in">Event Start Date and Time</Label>
               <Input
                 id="check-in"
                 type="datetime-local"
-                value={checkInTime}
-                onChange={(e) => setCheckInTime(e.target.value)}
+                value={startDateTime}
+                onChange={(e) => setStartDateTime(e.target.value)}
                 required
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="check-out">Check Out Time</Label>
+              <Label htmlFor="check-out">Event End Date and Time</Label>
               <Input
                 id="check-out"
                 type="datetime-local"
-                value={checkOutTime}
-                onChange={(e) => setCheckOutTime(e.target.value)}
+                value={endDateTime}
+                onChange={(e) => setEndDateTime(e.target.value)}
                 required
               />
             </div>
             <div className="grid gap-2">
-              <Label>Status:</Label>
-               <span className="rounded-md bg-muted px-3 py-1 text-sm text-muted-foreground w-fit">
-    Not revised
-  </span>
+              <Label htmlFor="event-location">Event Location</Label>
+              <Input
+                id="event-location"
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                required
+              />
             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="event-address">Event Address</Label>
+              <Input
+                id="event-address"
+                type="text"
+                value={eventAddress}
+                onChange={(e) => setEventAddress(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="event-location">Maximum number of volunteers</Label>
+              <Input
+                id="event-location"
+                type="number"
+                value={maxVolunteers !== null ? maxVolunteers : ''}
+                onChange={(e) => setMaxVolunteers(e.target.value === '' ? null : Number(e.target.value))}
+              />
+            </div>
+             <div className="grid gap-2">
+              <Label htmlFor="event-skills">Required Skills</Label>
+              <Input
+                id="event-skills"
+                type="text"
+                value={eventSkills}
+                onChange={(e) => setEventSkills(e.target.value)}
+              />
+            </div>
+            <Label>Is the event virtual?</Label>
+            <Select
+              value={isVirtual.toString()}
+              onValueChange={(value) => setIsVirtual(value === 'true')}
+              required
+            >
+                <SelectTrigger>
+                    <SelectValue placeholder="Select option" />
+                </SelectTrigger>
+                  <SelectContent>
+                  <SelectItem value="true">Yes</SelectItem>
+                  <SelectItem value="false">No</SelectItem>
+                </SelectContent>
+            </Select>
+            <Label>Is the event urgent?</Label>
+            <Select
+              value={isUrgent.toString()}
+              onValueChange={(value) => setIsUrgent(value === 'true')}
+              required
+            >
+                <SelectTrigger>
+                    <SelectValue placeholder="Select option" />
+                </SelectTrigger>
+                  <SelectContent>
+                  <SelectItem value="true">Yes</SelectItem>
+                  <SelectItem value="false">No</SelectItem>
+                </SelectContent>
+            </Select>
+            <Label>Is the event high risk?</Label>
+            <Select
+              value={isHighRisk.toString()}
+              onValueChange={(value) => setIsHighRisk(value === 'true')}
+              required
+            >
+                <SelectTrigger>
+                    <SelectValue placeholder="Select option" />
+                </SelectTrigger>
+                  <SelectContent>
+                  <SelectItem value="true">Yes</SelectItem>
+                  <SelectItem value="false">No</SelectItem>
+                </SelectContent>
+            </Select>
+            <Label>Is the event group friendly?</Label>
+            <Select
+              value={isGroupFriendly.toString()}
+              onValueChange={(value) => setIsGroupFriendly(value === 'true')}
+              required
+            >
+                <SelectTrigger>
+                    <SelectValue placeholder="Select option" />
+                </SelectTrigger>
+                  <SelectContent>
+                  <SelectItem value="true">Yes</SelectItem>
+                  <SelectItem value="false">No</SelectItem>
+                </SelectContent>
+            </Select>
           </div>
         
       </CardContent>
       <CardFooter className="flex-col gap-2">
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? 'Submitting your log...' : 'Submit time log'}
+          {isSubmitting ? 'Creating Event...' : 'Create Event'}
         </Button>
       </CardFooter>
     </Card>

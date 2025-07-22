@@ -229,7 +229,7 @@ export default function Dashboard() {
                       : "Join Event"}
                   </Button>
                 </div>
-                <div className="mt-4 text-sm text-muted-foreground">
+                <div className="mt-4 w-full">
                       <EventCreationForm />
                 </div>
               </div>
