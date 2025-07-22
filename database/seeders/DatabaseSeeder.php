@@ -33,5 +33,13 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('F^bnYD#nb6M8oG'),
             ]
         );
+
+        User::firstOrCreate(
+            ['email' => 'vero.mestre11@gmail.com'],
+            [
+                'name' => 'Vero Mestre',
+                'password' => Hash::make('eCk58Uw$fL.i3m4'),
+            ]
+        );
     }
 }
