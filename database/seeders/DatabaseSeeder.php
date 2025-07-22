@@ -19,9 +19,9 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             PermissionSeeder::class,
             VolunteerSeeder::class,
-            OrganisationSeeder::class,,
+            OrganisationSeeder::class,
             EventStatusSeeder::class,
-            EventSeeder::class,,
+            EventSeeder::class,
             VolunteerTimeLogSeeder::class,
         ]);
 
@@ -30,6 +30,14 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Shirleen Kneppers',
                 'password' => Hash::make('F^bnYD#nb6M8oG'),
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'vero.mestre11@gmail.com'],
+            [
+                'name' => 'Vero Mestre',
+                'password' => Hash::make('eCk58Uw$fL.i3m4'),
             ]
         );
     }
