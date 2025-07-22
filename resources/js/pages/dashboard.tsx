@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CalendarDays, MapPin, Users, Info } from "lucide-react";
 import { useEffect, useState } from 'react';
+import EventCreationForm from '@/components/event-creation-model';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -227,6 +228,9 @@ export default function Dashboard() {
                       ? "Event Full"
                       : "Join Event"}
                   </Button>
+                </div>
+                <div className="mt-4 text-sm text-muted-foreground">
+                      <EventCreationForm />
                 </div>
               </div>
             </div>
