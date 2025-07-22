@@ -81,9 +81,9 @@ export default function VolunteerLogTimeForm({ className }: React.ComponentProps
       if (!token) throw new Error('Authentication token not available');
 
       const start = new Date(checkInTime);
-      console.log('Check-in time:', start);
+      //console.log('Check-in time:', start);
       const end = new Date(checkOutTime);
-      console.log('Check-out time:', end);
+      //console.log('Check-out time:', end);
 
 if (isNaN(start.getTime()) || isNaN(end.getTime())) {
   throw new Error('Invalid check-in or check-out time');
@@ -106,7 +106,7 @@ if (hoursLogged <= 0) {
         volunteerTimeLogStatus: 'pending',
       };
 
-      console.log('Volunteer Time Log Data:', volunteerTimeLogData);
+      //console.log('Volunteer Time Log Data:', volunteerTimeLogData);
 
       // Send POST request to register volunteer time log
       const response = await fetch('/api/volunteer_time_logs', {
@@ -131,7 +131,7 @@ if (hoursLogged <= 0) {
           responseData.error || responseData.message || 'Failed to register your volunteering hours'
         );
       }
-      console.log('Volunteer time registration successful');
+      //console.log('Volunteer time registration successful');
       window.location.reload(); // Refresh page to update roles/state
       toast('Volunteering time registration successful');
       
@@ -172,7 +172,6 @@ if (hoursLogged <= 0) {
                 <SelectValue placeholder="Select event" />
               </SelectTrigger>
               <SelectContent>
-              {/* {console.log('Events:', events)} */}
               {events.length > 0 &&
                 events.map(event => (
                   <SelectItem key={event.eventId} value={event.eventId}>
@@ -182,7 +181,6 @@ if (hoursLogged <= 0) {
               }
           </SelectContent>
         </Select>
-          {/* {console.log('data2:', events.member)} */}
             <div className="grid gap-2">
               <Label htmlFor="check-in">Check In Time</Label>
               <Input
