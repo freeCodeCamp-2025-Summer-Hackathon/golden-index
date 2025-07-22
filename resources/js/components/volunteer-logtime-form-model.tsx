@@ -64,16 +64,21 @@ export default function VolunteerLogTimeForm({ className }: React.ComponentProps
 
         const data: EventsResponse = await response.json();
         setEvents(data.member || []);
-        console.log('data:', data.member);
-        console.log('Events count:', events.length);
+        // console.log('useEffect data:', data.member);
+        // console.log('Events count:', events.length);
       } catch (error) {
         console.error('Error fetching events:', error);
         setEvents([]); // Reset events on error
       }
       }
     fetchEvents();
-    }, [auth.token]);
+    }, []);
     
+    // useEffect(() => {
+    //   if (events.length > 0) {
+    //     console.log('data2:', events);
+    //   }
+    // }, [events]);
    // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,17 +184,17 @@ if (hoursLogged <= 0) {
                 <SelectValue placeholder="Select event" />
               </SelectTrigger>
               <SelectContent>
-              {events.length === 0 && console.log('No events found')}
+              {/* {console.log('Events:', events)} */}
               {events.length > 0 &&
                 events.map(event => (
-                  <SelectItem key={event.event_id} value={event.event_id}>
-                    {event.event_title}
+                  <SelectItem key={event.eventId} value={event.eventId}>
+                    {event.eventTitle}
                   </SelectItem>
                 )) 
               }
           </SelectContent>
         </Select>
-          {console.log('data2:', data.member)}
+          {/* {console.log('data2:', events.member)} */}
             <div className="grid gap-2">
               <Label htmlFor="check-in">Check In Time</Label>
               <Input
