@@ -13,9 +13,36 @@ import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { ArrowLeft, Building2, Users } from 'lucide-react';
 import * as React from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 type UserType = 'volunteer' | 'organization' | null;
+
+type OrganisationDataType = {
+    organisationName: string;
+    organisationDescription: string;
+    organisationEmail: string;
+    organisationPhone: string;
+    organisationAddress: string;
+    website: string;
+    contactInfo: {
+        facebook?: string;
+        twitter?: string;
+        linkedin?: string;
+        other?: string;
+    };
+    missionStatement: string;
+    orgType: string;
+}
+
+
+type VolunteerDataType = {
+  onboarding_status: 'pending' | 'approved' | 'rejected';
+  bio: string;
+  skills: string[];
+  experience: string;
+  availability: string;
+};
 
 export default function RegisterDrawerDialog() {
     const { auth } = usePage<SharedData>().props;
@@ -137,6 +164,37 @@ function UserTypeSelection({ onSelect }: { onSelect: (type: UserType) => void })
     );
 }
 
+
+const submitRegistrationData = async (data: VolunteerDataType | OrganisationDataType, url: string, token: string) => {
+    console.log("Data before submit", data);
+
+        const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(data),
+            });
+
+        let responseData;
+            try {
+                responseData = await response.json();
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            } catch (parseError) {
+                throw new Error('Server returned invalid response. Please try again.');
+            }
+
+            if (!response.ok) {
+                throw new Error(responseData.error || responseData.message || 'Failed to register');
+            }
+
+            console.log('Registration successful');
+            // Refresh the page to update user roles and hide the dialog
+            window.location.reload();
+            toast('Registration successful');
+    }
+
 function VolunteerForm({ className }: React.ComponentProps<'form'> & { onClose?: () => void }) {
     const { auth } = usePage<SharedData>().props;
     const [bio, setBio] = React.useState('');
@@ -159,7 +217,7 @@ function VolunteerForm({ className }: React.ComponentProps<'form'> & { onClose?:
             }
 
             // Prepare volunteer data according to requirements
-            const volunteerData = {
+            const volunteerData : VolunteerDataType = {
                 onboarding_status: 'pending',
                 bio: bio || 'sample bio',
                 skills: skills ? skills.split(',').map((skill) => skill.trim()) : ['skill1', 'skill2'],
@@ -168,31 +226,10 @@ function VolunteerForm({ className }: React.ComponentProps<'form'> & { onClose?:
             };
 
             // Submit volunteer registration to /api/volunteers route
-            const response = await fetch('/api/volunteers', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(volunteerData),
-            });
 
-            let responseData;
-            try {
-                responseData = await response.json();
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (parseError) {
-                throw new Error('Server returned invalid response. Please try again.');
-            }
+            submitRegistrationData(volunteerData, '/api/volunteers', token);
 
-            if (!response.ok) {
-                throw new Error(responseData.error || responseData.message || 'Failed to register as volunteer');
-            }
-
-            console.log('Volunteer registration successful');
-            // Refresh the page to update user roles and hide the dialog
-            window.location.reload();
-            toast('Volunteer registration successful');
+            
         } catch (error) {
             console.error('Error registering volunteer:', error);
             setError(error instanceof Error ? error.message : 'Failed to register as volunteer. Please try again.');
@@ -253,48 +290,112 @@ function VolunteerForm({ className }: React.ComponentProps<'form'> & { onClose?:
 }
 
 function OrganizationForm({ className, onClose }: React.ComponentProps<'form'> & { onClose?: () => void }) {
+    const { auth } = usePage<SharedData>().props;
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [formData, setFormData] = useState<OrganisationDataType>(
+        {
+            organisationName: "",
+            organisationDescription: "",
+            organisationEmail: "",
+            organisationPhone: "",
+            organisationAddress: "",
+            website: "",
+            contactInfo: {},
+            missionStatement: "",
+            orgType: "",
+        }
+    );
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { id, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [id]: value,
+        }));
+    }
+    const handleSelectChange = (value: string) => {
+        setFormData((prevData) => ({
+            ...prevData,
+            orgType: value,
+        }));
+    };
+    const handleContactChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            contactInfo: {
+                ...prevData.contactInfo,
+                [id]: value,
+            },
+        }));
+    }
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         // Handle organization form submission
+        setIsSubmitting(true);
+        setError(null);
+
+        try {
+            const token = auth.token;
+
+            if (!token) {
+                throw new Error('Authentication token not available');
+            }
+
+            // Submit organization registration to /api/organizations route
+            submitRegistrationData(formData, '/api/organisations', token);
+
+            
+        } catch (error) {
+            console.error('Error registering organization:', error);
+            setError(error instanceof Error ? error.message : 'Failed to register organization. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
+
         console.log('Organization form submitted');
         onClose?.();
     };
 
+
+
     return (
         <form className={cn('grid max-h-[60vh] items-start gap-4 overflow-y-auto', className)} onSubmit={handleSubmit}>
+            {error && <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-900/20 dark:text-red-200">{error}</div>}
             <div className="grid gap-2">
-                <Label htmlFor="org-name">Organization Name *</Label>
-                <Input id="org-name" placeholder="Your Organization Name" required />
+                <Label htmlFor="organisationName">Organization Name *</Label>
+                <Input id="organisationName" value={formData.organisationName} onChange={handleChange} placeholder="Your Organization Name" required />
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="org-description">Description *</Label>
-                <Textarea id="org-description" placeholder="Brief description of your organization" className="min-h-[80px]" required />
+                <Label htmlFor="organisationDescription">Description *</Label>
+                <Textarea id="organisationDescription" value={formData.organisationDescription} onChange={handleChange} placeholder="Brief description of your organization" className="min-h-[80px]" required />
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="org-email">Organization Email *</Label>
-                <Input type="email" id="org-email" placeholder="contact@organization.com" required />
+                <Label htmlFor="organisationEmail">Organization Email *</Label>
+                <Input type="email" id="organisationEmail" value={formData.organisationEmail} onChange={handleChange} placeholder="contact@organization.com" required />
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="org-phone">Organization Phone *</Label>
-                <Input type="tel" id="org-phone" placeholder="+1 (555) 123-4567" required />
+                <Label htmlFor="organisationPhone">Organization Phone *</Label>
+                <Input type="tel" id="organisationPhone" value={formData.organisationPhone} onChange={handleChange} placeholder="+1 (555) 123-4567" required />
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="org-address">Address *</Label>
-                <Textarea id="org-address" placeholder="Full address of your organization" className="min-h-[60px]" required />
+                <Label htmlFor="organisationAddress">Address *</Label>
+                <Textarea id="organisationAddress" value={formData.organisationAddress} onChange={handleChange} placeholder="Full address of your organization" className="min-h-[60px]" required />
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="org-website">Website</Label>
-                <Input type="url" id="org-website" placeholder="https://www.yourorganization.com" />
+                <Label htmlFor="website">Website</Label>
+                <Input type="url" id="website" value={formData.website} onChange={handleChange} placeholder="https://www.yourorganization.com" />
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="org-type">Organization Type *</Label>
-                <Select required>
+                <Label htmlFor="orgType">Organization Type *</Label>
+                <Select value={formData.orgType} onValueChange={handleSelectChange} required>
                     <SelectTrigger>
                         <SelectValue placeholder="Select organization type" />
                     </SelectTrigger>
@@ -311,17 +412,23 @@ function OrganizationForm({ className, onClose }: React.ComponentProps<'form'> &
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="org-mission">Mission Statement *</Label>
-                <Textarea id="org-mission" placeholder="Your organization's mission and goals" className="min-h-[80px]" required />
+                <Label htmlFor="missionStatement">Mission Statement *</Label>
+                <Textarea id="missionStatement" value={formData.missionStatement} placeholder="Your organization's mission and goals" className="min-h-[80px]" onChange={handleChange} required />
             </div>
 
             <div className="grid gap-2">
-                <Label htmlFor="org-contact">Primary Contact Information *</Label>
-                <Input id="org-contact" placeholder="Primary contact person name and title" required />
+                <Label aria-label='Primary Contact Information'>Primary Contact Information</Label>
+                <Input id="facebook" value={formData.contactInfo.facebook} placeholder="Facebook page"
+                    onChange={handleContactChange} />
+                <Input id="twitter" value={formData.contactInfo.twitter} placeholder="Twitter handle"
+                    onChange={handleContactChange} />
+                <Input id="linkedin" value={formData.contactInfo.linkedin} placeholder="LinkedIn profile URL"
+                    onChange={handleContactChange} />
+                <Input id="other" value={formData.contactInfo.other} placeholder="Others"
+                    onChange={handleContactChange} />
             </div>
-
-            <Button type="submit" className="w-full">
-                Register Organization
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? 'Registering...' : 'Register Organization'}
             </Button>
         </form>
     );
