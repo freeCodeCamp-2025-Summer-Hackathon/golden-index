@@ -117,8 +117,8 @@ if (hoursLogged <= 0) {
 
       console.log('Volunteer Time Log Data:', volunteerTimeLogData);
 
-      // Send POST request to register volunteer
-      const response = await fetch('/api/volunteer-time-log', {
+      // Send POST request to register volunteer time log
+      const response = await fetch('/api/volunteer-time-logs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ if (hoursLogged <= 0) {
 
       if (!response.ok) {
         throw new Error(
-          responseData.error || responseData.message || 'Failed to register as volunteer'
+          responseData.error || responseData.message || 'Failed to register your volunteering hours'
         );
       }
 
