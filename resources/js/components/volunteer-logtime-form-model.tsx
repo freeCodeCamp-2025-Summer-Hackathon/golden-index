@@ -34,15 +34,6 @@ export default function VolunteerLogTimeForm({ className }: React.ComponentProps
   //Use a custom hook to determine if the screen size is desktop or mobile
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
-  //Dummy data for events
-    const items = [
-        { value: 'event1', label: 'Red Cross Volunteer' },
-        { value: 'event2', label: 'Habitat for Humanity' },
-        { value: 'event3', label: 'Food Bank Drive' },
-        { value: 'event4', label: 'Community Clean-Up' },
-        { value: 'event5', label: 'Animal Shelter' },
-    ];
-
     const [selectedEvent, setSelectedEvent] = useState("");
      const [isSubmitting, setIsSubmitting] = React.useState(false);
      const [error, setError] = React.useState<string | null>(null);
@@ -123,7 +114,7 @@ if (hoursLogged <= 0) {
       console.log('Volunteer Time Log Data:', volunteerTimeLogData);
 
       // Send POST request to register volunteer time log
-      const response = await fetch('/api/volunteer-time-logs', {
+      const response = await fetch('/api/volunteer_time_logs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -145,14 +136,15 @@ if (hoursLogged <= 0) {
           responseData.error || responseData.message || 'Failed to register your volunteering hours'
         );
       }
-
-      toast.success('Volunteer registration successful');
+      console.log('Volunteer time registration successful');
       window.location.reload(); // Refresh page to update roles/state
-      if (onClose) onClose();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to register as volunteer. Please try again.';
+      toast('Volunteering time registration successful');
+      
+    } catch (error) {
+      console.error('Error registering volunteer time log:', error);
+      const message = error instanceof Error ? error.message : 'Failed to register as volunteer. Please try again.';
       setError(message);
-      console.error('Error registering volunteer:', message);
+
     } finally {
       setIsSubmitting(false);
     }
@@ -164,6 +156,7 @@ if (hoursLogged <= 0) {
       onSubmit={handleSubmit}
       noValidate
       >
+        {error && <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-900/20 dark:text-red-200">{error}</div>}
         <Card className="w-full max-w-sm">
         <CardHeader>
         <CardTitle>VolunteerMatch</CardTitle>
@@ -226,8 +219,8 @@ if (hoursLogged <= 0) {
         
       </CardContent>
       <CardFooter className="flex-col gap-2">
-        <Button type="submit" className="w-full">
-          Submit
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting your log...' : 'Submit time log'}
         </Button>
       </CardFooter>
     </Card>
