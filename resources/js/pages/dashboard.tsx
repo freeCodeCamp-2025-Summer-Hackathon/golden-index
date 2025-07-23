@@ -2,6 +2,7 @@ import { EventCard, EventType } from '@/components/events-card';
 import RegisterDrawerDialog from '@/components/register-drawer-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import VolunteerLogTimeForm from '@/components/volunteer-logtime-form-model';
 import AppLayout from '@/layouts/app-layout';
 import useEventStore from '@/store/eventStore';
 import { type BreadcrumbItem, type SharedData } from '@/types';
@@ -263,6 +264,9 @@ export default function Dashboard() {
                             </p>
                         </div>
                     )}
+                </div>
+                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
+                    <VolunteerLogTimeForm />
                 </div>
             </div>
         </AppLayout>

@@ -6,26 +6,26 @@ import { CalendarDays, MapPin, Users } from "lucide-react"
 
 // Define the EventType based on your dummy data structure
 export interface EventType {
-  eventId: string
-  organizationId: string
-  eventTitle: string
-  eventDescription: string
-  startDatetime: string
-  endDatetime: string
-  location: string
-  eventAddress: string | null
-  isVirtual: boolean
-  maxVolunteers?: number
-  currentVolunteers: number
-  isUrgent: boolean
-  recurrencePattern: string | null
-  categoryId: number
-  eventStatusId: number
-  isHighRisk: boolean
-  isGroupFriendly: boolean
-  requiredSkills?: string[]
-  createdAt: string
-  updatedAt: string
+  eventId: string;
+  organizationId: string;
+  eventTitle: string;
+  eventDescription: string;
+  startDatetime: string;
+  endDatetime: string;
+  location: string;
+  eventAddress: string | null;
+  isVirtual: boolean;
+  maxVolunteers?: number;
+  currentVolunteers: number;
+  isUrgent: boolean;
+  recurrencePattern: string | null;
+  categoryId: number;
+  eventStatusId: number;
+  isHighRisk: boolean;
+  isGroupFriendly: boolean;
+  requiredSkills?: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface EventCardProps {
