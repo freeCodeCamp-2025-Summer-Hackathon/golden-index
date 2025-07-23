@@ -12,7 +12,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { Textarea } from '@/components/ui/textarea';
@@ -41,10 +41,19 @@ export default function EventCreationForm({ className }: React.ComponentProps<'f
     const [isHighRisk, setIsHighRisk] = useState(false);
     const [isGroupFriendly, setIsGroupFriendly] = useState(false);
     const [requiredSkills, setRequiredSkills] = useState<string[]>([]);
+    const [skillInput, setSkillInput] = useState('');
 
-     useEffect(() => {
-        
-    }, []);
+    const addSkill = () => {
+      const trimmedSkill = skillInput.trim();
+      if (trimmedSkill && !requiredSkills.includes(trimmedSkill)) {
+        setRequiredSkills([...requiredSkills, trimmedSkill]);
+      }
+      setSkillInput('');
+    };
+
+    const removeSkill = (indexToRemove: number) => {
+      setRequiredSkills(requiredSkills.filter((_, i) => i !== indexToRemove));
+    };
     
    // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,8 +64,6 @@ export default function EventCreationForm({ className }: React.ComponentProps<'f
     try {
       const token = auth.token;
       if (!token) throw new Error('Authentication token not available');
-
-
 
       // Prepare data object, parse skills into array, fallback with defaults if empty
       const eventData = {
@@ -97,16 +104,16 @@ export default function EventCreationForm({ className }: React.ComponentProps<'f
 
       if (!response.ok) {
         throw new Error(
-          responseData.error || responseData.message || 'Failed to register your volunteering hours'
+          responseData.error || responseData.message || 'Failed to create event'
         );
       }
-      console.log('Volunteer time registration successful');
+      console.log('Event creation successful');
       window.location.reload(); // Refresh page to update roles/state
-      toast('Volunteering time registration successful');
+      toast('Event creation successful');
       
     } catch (error) {
-      console.error('Error registering volunteer time log:', error);
-      const message = error instanceof Error ? error.message : 'Failed to register as volunteer. Please try again.';
+      console.error('Error creating event:', error);
+      const message = error instanceof Error ? error.message : 'Failed to create event. Please try again.';
       setError(message);
 
     } finally {
@@ -214,15 +221,47 @@ export default function EventCreationForm({ className }: React.ComponentProps<'f
                 onChange={(e) => setMaxVolunteers(e.target.value === '' ? null : Number(e.target.value))}
               />
             </div>
-             {/*<div className="grid gap-2">
-              <Label htmlFor="event-skills">Required Skills</Label>
-              <Input
-                id="event-skills"
-                type="text"
-                value={eventSkills}
-                onChange={(e) => setEventSkills(e.target.value)}
-              />*/}
-            </div>
+             <div className="grid gap-2">
+                <Label htmlFor="skill-input">Required Skills</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="skill-input"
+                    type="text"
+                    value={skillInput}
+                    onChange={(e) => setSkillInput(e.target.value)}
+                    placeholder="Type a skill and press Enter or click Add"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addSkill();
+                      }
+                    }}
+                  />
+                  <Button type="button" onClick={addSkill}>Add</Button>
+                </div>
+                
+                {/* Display Skills as removable tags */}
+                  {requiredSkills.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {requiredSkills.map((skill, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-2 bg-muted px-3 py-1 rounded-full text-sm"
+                        >
+                          <span>{skill}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeSkill(index)}
+                            className="text-red-500 font-bold hover:text-red-700 focus:outline-none"
+                            title="Remove skill"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
             <Label>Is the event virtual?</Label>
             <Select
               value={isVirtual.toString()}
@@ -278,7 +317,8 @@ export default function EventCreationForm({ className }: React.ComponentProps<'f
                   <SelectItem value="true">Yes</SelectItem>
                   <SelectItem value="false">No</SelectItem>
                 </SelectContent>
-            </Select>        
+            </Select>     
+            </div>   
       </CardContent>
       <CardFooter className="flex-col gap-2">
         <Button type="submit" className="w-full" disabled={isSubmitting}>
