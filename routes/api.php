@@ -136,15 +136,15 @@ Route::get('/jwt-debug', function (Request $request) {
 
 Route::post('/organisations', function (Request $request) {
     $validate = $request->validate([
-        'organisation_name' => 'required|string',
-        'organisation_description' => 'nullable|string',
-        'organisation_email' => 'required|email|unique:organisations,organisation_email',
-        'organisation_phone' => 'nullable|string',
-        'organisation_address' => 'nullable|string',
+        'organisationName' => 'required|string',
+        'organisationDescription' => 'nullable|string',
+        'organisationEmail' => 'required|email|unique:organisations,organisation_email',
+        'organisationPhone' => 'nullable|string',
+        'organisationAddress' => 'nullable|string',
         'website' => 'nullable|url',
-        'contact_info' => 'nullable|array',
-        'mission_statement' => 'nullable|string',
-        'org_type' => 'required|string',
+        'contactInfo' => 'nullable|array',
+        'missionStatement' => 'nullable|string',
+        'orgType' => 'required|string',
     ]);
     $organisation = Organisation::create($validate);
 
