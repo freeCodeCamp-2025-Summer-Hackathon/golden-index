@@ -48,6 +48,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user() ? [
                     ...$request->user()->toArray(),
                     'roles' => $request->user()->getRoleNames()->toArray(),
+                    'organisationId' => $request->user()->hasRole('organisation-admin') ? $request->user()->organisations()->first()?->organisation_id : null
                 ] : null,
                  'token' => $request->user() ? JWTAuth::fromUser($request->user()) : null,
             ],
