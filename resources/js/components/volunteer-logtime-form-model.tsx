@@ -6,20 +6,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 //import { useMediaQuery } from '@/hooks/use-media-query';
 import useEventStore from '@/store/eventStore';
-import { EventType } from './events-card'; // Adjust the import path as necessary
 
 // Define the structure of the volunteer time log data
-interface EventsResponse {
-    '@context': string;
-    '@id': string;
-    '@type': string;
-    totalItems: number;
-    member: EventType[];
-}
+// interface EventsResponse {
+//     '@context': string;
+//     '@id': string;
+//     '@type': string;
+//     totalItems: number;
+//     member: EventType[];
+// }
 
 export default function VolunteerLogTimeForm({ className }: React.ComponentProps<'form'> & { onClose?: () => void }) {
     //Extract auth info (including token) from the global page props via Inertia.js

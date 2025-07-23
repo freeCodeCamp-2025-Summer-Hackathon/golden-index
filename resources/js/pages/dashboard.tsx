@@ -153,7 +153,7 @@ export default function Dashboard() {
         if (!hasFetched && auth?.token) {
             fetchEvents(auth.token);
         }
-    }, [hasFetched, auth?.token]);
+    }, [hasFetched, auth?.token, fetchEvents]);
 
     const allEvents = filteredEvents;
 

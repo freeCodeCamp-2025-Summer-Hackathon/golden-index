@@ -1,12 +1,10 @@
 import { EventType } from '@/components/events-card';
-import { SharedData } from '@/types';
-import { usePage } from '@inertiajs/react';
 import { create } from 'zustand';
 
 interface EventStore {
     events: EventType[]
     isLoading: boolean
-    error: {} | null
+    error: unknown | null
     hasFetched: boolean
     fetchEvents: (token: string) => Promise<void>
 }
