@@ -41,5 +41,13 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('eCk58Uw$fL.i3m4'),
             ]
         );
+
+        User::firstOrCreate(
+            ['email' => 'adnanakbar.0207@gmail.com'],
+            [
+                'name' => 'Adnan Akbar',
+                'password' => Hash::make('A9fX&2bQ7mL6T1z'),
+            ]
+        );
     }
 }
