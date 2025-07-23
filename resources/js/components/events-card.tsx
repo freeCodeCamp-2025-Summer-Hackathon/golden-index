@@ -6,26 +6,26 @@ import { CalendarDays, MapPin, Users } from "lucide-react"
 
 // Define the EventType based on your dummy data structure
 export interface EventType {
-  event_id: string
-  organization_id: string
-  event_title: string
-  event_description: string
-  start_datetime: string
-  end_datetime: string
+  eventId: string
+  organizationId: string
+  eventTitle: string
+  eventDescription: string
+  startDatetime: string
+  endDatetime: string
   location: string
-  event_address: string | null
-  is_virtual: boolean
-  max_volunteers?: number
-  current_volunteers: number
-  is_urgent: boolean
-  recurrence_pattern: string | null
-  category_id: number
-  event_status_id: number
-  is_high_risk: boolean
-  is_group_friendly: boolean
-  required_skills?: string[]
-  created_at: string
-  updated_at: string
+  eventAddress: string | null
+  isVirtual: boolean
+  maxVolunteers?: number
+  currentVolunteers: number
+  isUrgent: boolean
+  recurrencePattern: string | null
+  categoryId: number
+  eventStatusId: number
+  isHighRisk: boolean
+  isGroupFriendly: boolean
+  requiredSkills?: string[]
+  createdAt: string
+  updatedAt: string
 }
 
 interface EventCardProps {
@@ -34,8 +34,8 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, onClick }: EventCardProps) {
-  const startDate = new Date(event.start_datetime)
-  const endDate = new Date(event.end_datetime)
+  const startDate = new Date(event.startDatetime)
+  const endDate = new Date(event.endDatetime)
 
   const formattedDate = startDate.toLocaleDateString("en-US", {
     year: "numeric",
@@ -53,8 +53,8 @@ export function EventCard({ event, onClick }: EventCardProps) {
       onClick={() => onClick(event)} // Call onClick with the event object
     >
       <CardHeader>
-        <CardTitle className="text-lg">{event.event_title}</CardTitle>
-        <CardDescription className="line-clamp-2 text-sm">{event.event_description}</CardDescription>
+        <CardTitle className="text-lg">{event.eventTitle}</CardTitle>
+        <CardDescription className="line-clamp-2 text-sm">{event.eventDescription}</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-2 text-sm">
         <div className="flex items-center gap-2">
@@ -65,20 +65,20 @@ export function EventCard({ event, onClick }: EventCardProps) {
         </div>
         <div className="flex items-center gap-2">
           <MapPin className="size-4 text-muted-foreground" />
-          <span>{event.is_virtual ? "Virtual" : event.location}</span>
+          <span>{event.isVirtual ? "Virtual" : event.location}</span>
         </div>
         <div className="flex items-center gap-2">
           <Users className="size-4 text-muted-foreground" />
           <span>
-            {event.current_volunteers}
-            {event.max_volunteers ? ` / ${event.max_volunteers}` : ""} volunteers
+            {event.currentVolunteers}
+            {event.maxVolunteers ? ` / ${event.maxVolunteers}` : ""} volunteers
           </span>
         </div>
         <div className="flex flex-wrap gap-1 mt-2">
-          {event.is_urgent && <Badge variant="destructive">Urgent</Badge>}
-          {event.is_virtual && <Badge variant="secondary">Virtual</Badge>}
-          {event.is_group_friendly && <Badge variant="secondary">Group Friendly</Badge>}
-          {event.required_skills?.map((skill) => (
+          {event.isUrgent && <Badge variant="destructive">Urgent</Badge>}
+          {event.isVirtual && <Badge variant="secondary">Virtual</Badge>}
+          {event.isGroupFriendly && <Badge variant="secondary">Group Friendly</Badge>}
+          {event.requiredSkills?.map((skill) => (
             <Badge key={skill} variant="outline">
               {skill}
             </Badge>
