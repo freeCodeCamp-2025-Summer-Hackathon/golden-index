@@ -41,7 +41,7 @@ class EventFactory extends Factory
             'event_status_id' => $statusId, 
             'is_high_risk' => $this->faker->boolean(),
             'is_group_friendly' => $this->faker->boolean(),
-            'required_skills' => json_encode($this->faker->randomElements(['PHP', 'JavaScript', 'React', 'Laravel'], 2)),
+            'required_skills' => $this->faker->randomElements(['PHP', 'JavaScript', 'React', 'Laravel'], 2),
             'created_at' => now(),
             'updated_at' => null,
         ];
