@@ -6,11 +6,23 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Organisation;
 use App\Models\Event;
 use App\Models\VolunteerTimeLog;
+use App\Http\Controllers\Events\VolunteerEventController;
+use App\Http\Controllers\Events\OrganisationEventController;
+use App\Models\User;
 
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Volunteers
+    Route::get('/volunteer/events/upcoming', [VolunteerEventController::class, 'upcoming']);
+    Route::get('/volunteer/events/past', [VolunteerEventController::class, 'past']);
+    // Organisation-admins
+    Route::get('/organisation/events/upcoming', [OrganisationEventController::class, 'upcomingEvents']);
+    Route::get('/organisation/events/past', [OrganisationEventController::class, 'pastEvents']);
+});
 
 Route::post('/volunteers', function (Request $request) {
     return response()->json([
@@ -19,15 +31,9 @@ Route::post('/volunteers', function (Request $request) {
     ]);
 })->middleware('auth:api');
 
-//Added GET and POST routes for Events
-//Route::get('/event', function (Request $request) {
-//    return Event::all();
-//})->middleware('auth:api');
-
-//Route::post('/event', function (Request $request) {
-//
+//Route::post('/events', function (Request $request) {
 //    $validated = $request->validate([
-//        'organisation_id' => 'required|uuid',
+//        'organisation_id' => 'required|uuid|exists:organisations,organisation_id',
 //        'event_title' => 'required|string|max:255',
 //        'event_description' => 'nullable|string',
 //        'start_datetime' => 'required|date',
@@ -40,70 +46,69 @@ Route::post('/volunteers', function (Request $request) {
 //        'is_urgent' => 'boolean',
 //        'recurrence_pattern' => 'nullable|string|in:daily,weekly,monthly,none',
 //        'category_id' => 'nullable|uuid',
-//        'event_status_id' => 'nullable|integer', // Assuming this is an integer ID
+//        'event_status_id' => 'nullable|uuid', // fix to uuid
 //        'is_high_risk' => 'boolean',
 //        'is_group_friendly' => 'boolean',
 //        'required_skills' => 'nullable|array',
 //    ]);
-//
+//    
 //    $event = Event::create([
-//        'event_id' => $request->input('event_id', (string) Str::uuid()),
+//        //'event_id' => $request->input('event_id', (string) Str::uuid()),  // or rely on HasUuid trait
 //        'organisation_id' => $validated['organisation_id'],
 //        'event_title' => $validated['event_title'],
-//        'event_description' => $validated['event_description'],
+//        'event_description' => $validated['event_description'] ?? null,
 //        'start_datetime' => $validated['start_datetime'],
 //        'end_datetime' => $validated['end_datetime'],
-//        'location' => $validated['location'],
-//        'event_address' => $validated['event_address'],
+//        'location' => $validated['location'] ?? null,
+//        'event_address' => $validated['event_address'] ?? null,
 //        'is_virtual' => $validated['is_virtual'] ?? false,
 //        'max_volunteers' => $validated['max_volunteers'],
 //        'current_volunteers' => $validated['current_volunteers'] ?? 0,
 //        'is_urgent' => $validated['is_urgent'] ?? false,
-//        'recurrence_pattern' => $validated['recurrence_pattern'],
-//        'category_id' => $validated['category_id'],
+//        'recurrence_pattern' => $validated['recurrence_pattern'] ?? 'none',
+//        'category_id' => $validated['category_id'] ?? null,
+//        'event_status_id' => $validated['event_status_id'] ?? null,
+//        'is_high_risk' => $validated['is_high_risk'] ?? false,
+//        'is_group_friendly' => $validated['is_group_friendly'] ?? false,
+//        'required_skills' => $validated['required_skills'] ?? [],
 //    ]);
+//
 //    return response()->json($event, 201);
 //})->middleware('auth:api');
-//
-//
-//
-//Route::get('/volunteer-time-log', function (Request $request) {
-//    return VolunteerTimeLog::all();
-//})->middleware('auth:api');
-//
-//Route::post('/volunteer-time-log', function (Request $request) {
-//    $validated = $request->validate([
-//        'volunteer_time_log_id' => 'required|uuid',
-//        'user_id' => 'required|uuid|exists:users,id',
-//        'event_id' => 'required|uuid|exists:events,id',
-//        'check_in_time' => 'required|date',
-//        'check_out_time' => 'required|date|after_or_equal:check_in_time',
-//        'log_method' => 'required|string|in:manual,auto',
-//        'dispute_reason' => 'nullable|string',
-//        'volunteer_time_log_status' => 'required|string|in:pending,approved,rejected',
-//        'is_disputed' => 'required|boolean',
-//        'hours_logged' => 'required|numeric|min:0',
-//        'created_at' => 'nullable|date',
-//        'updated_at' => 'nullable|date',
-//    ]);
-//
-//    $log = VolunteerTimeLog::create([
-//        'id' => $validated['volunteer_time_log_id'],
-//        'user_id' => $validated['user_id'],
-//        'event_id' => $validated['event_id'],
-//        'check_in_time' => $validated['check_in_time'],
-//        'check_out_time' => $validated['check_out_time'],
-//        'log_method' => $validated['log_method'],
-//        'dispute_reason' => $validated['dispute_reason'],
-//        'volunteer_time_log_status' => $validated['volunteer_time_log_status'],
-//        'is_disputed' => $validated['is_disputed'],
-//        'hours_logged' => $validated['hours_logged'],
-//        'created_at' => $validated['created_at'] ?? now(),
-//        'updated_at' => $validated['updated_at'],
-//    ]);
-//
-//    return response()->json($log, 201);
-//})->middleware('auth:api');
+
+Route::post('/volunteer-time-log', function (Request $request) {
+    $validated = $request->validate([
+        'volunteer_time_log_id' => 'required|uuid',
+        'user_id' => 'required|uuid|exists:users,id',
+        'event_id' => 'required|uuid|exists:events,id',
+        'check_in_time' => 'required|date',
+        'check_out_time' => 'required|date|after_or_equal:check_in_time',
+        'log_method' => 'required|string|in:manual,auto',
+        'dispute_reason' => 'nullable|string',
+        'volunteer_time_log_status' => 'required|string|in:pending,approved,rejected',
+        'is_disputed' => 'required|boolean',
+        'hours_logged' => 'required|numeric|min:0',
+        'created_at' => 'nullable|date',
+        'updated_at' => 'nullable|date',
+    ]);
+
+    $log = VolunteerTimeLog::create([
+        'id' => $validated['volunteer_time_log_id'],
+        'user_id' => $validated['user_id'],
+        'event_id' => $validated['event_id'],
+        'check_in_time' => $validated['check_in_time'],
+        'check_out_time' => $validated['check_out_time'],
+        'log_method' => $validated['log_method'],
+        'dispute_reason' => $validated['dispute_reason'],
+        'volunteer_time_log_status' => $validated['volunteer_time_log_status'],
+        'is_disputed' => $validated['is_disputed'],
+        'hours_logged' => $validated['hours_logged'],
+        'created_at' => $validated['created_at'] ?? now(),
+        'updated_at' => $validated['updated_at'],
+    ]);
+
+    return response()->json($log, 201);
+})->middleware('auth:api');
 
 Route::post('/login', function (Request $request) {
     $credentials = $request->only('email', 'password');
