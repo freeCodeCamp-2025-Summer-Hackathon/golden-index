@@ -12,13 +12,18 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { Textarea } from '@/components/ui/textarea';
 //import { useMediaQuery } from '@/hooks/use-media-query';
 
-export default function EventCreationForm({ className }: React.ComponentProps<'form'> & { onClose?: () => void }) {
+type Props = React.ComponentProps<'form'> & {
+  onClose?: () => void;
+  scrollToTop?: () => void;
+};
+
+export default function EventCreationForm({ className }: Props) {
 
   //Extract auth info (including token) from the global page props via Inertia.js
   const { auth } = usePage<SharedData>().props;
@@ -42,6 +47,7 @@ export default function EventCreationForm({ className }: React.ComponentProps<'f
     const [isGroupFriendly, setIsGroupFriendly] = useState(false);
     const [requiredSkills, setRequiredSkills] = useState<string[]>([]);
     const [skillInput, setSkillInput] = useState('');
+    const formRef = useRef<HTMLFormElement>(null);
 
     const addSkill = () => {
       const trimmedSkill = skillInput.trim();
@@ -115,6 +121,7 @@ export default function EventCreationForm({ className }: React.ComponentProps<'f
       console.error('Error creating event:', error);
       const message = error instanceof Error ? error.message : 'Failed to create event. Please try again.';
       setError(message);
+      formRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
 
     } finally {
       setIsSubmitting(false);
@@ -123,6 +130,7 @@ export default function EventCreationForm({ className }: React.ComponentProps<'f
 
     return (
       <form
+      ref={formRef}
       className={cn('grid max-h-[60vh] items-start gap-4 overflow-y-auto', className)}
       onSubmit={handleSubmit}
       noValidate
