@@ -1,18 +1,21 @@
 import { EventCard, EventType } from '@/components/events-card';
-import RegisterDrawerDialog from '@/components/register-drawer-dialog';
+import { Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import EventCreationForm from '@/components/event-creation-model';
 import AppLayout from '@/layouts/app-layout';
 import useEventStore from '@/store/eventStore';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { CalendarDays, Info, MapPin, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import VolunteerLogTimeForm from '@/components/volunteer-logtime-form-model';
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
+        title: 'My Events',
+        href: '/my-events',
     },
 ];
 
@@ -141,10 +144,11 @@ const filterOrganisationEvents = (events: EventType[], organisationId: string) =
     });
 };
 
-export default function Dashboard() {
+export default function MyEvents() {
     const { auth } = usePage<SharedData>().props;
     console.log('Auth:', auth.user);
     const { events, fetchEvents, hasFetched } = useEventStore();
+    const [showForm, setShowForm] = useState(false);
 
     const filteredEvents = filterOrganisationEvents(events, auth?.user?.organisationId || '');
 
@@ -156,7 +160,7 @@ export default function Dashboard() {
 
     const allEvents = filteredEvents;
 
-    // console.log(allEvents);
+    console.log(allEvents);
     // console.log("Auth", auth);
 
     const now = new Date();
@@ -170,13 +174,81 @@ export default function Dashboard() {
         }
     }, [defaultUpcomingEvent, selectedEvent]);
 
-    // Check if user has only the 'user' role with safety checks
-    const shouldShowRegisterDialog = auth.user?.roles?.length === 1 && auth.user.roles[0] === 'user';
+    // Check if user has only the 'organisation-admin' role with safety checks
+    const isUserOrgAdmin = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'organisation-admin';
+    // Check if user has only the 'volunteer' role with safety checks
+    const isUserVolunteer = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'volunteer';
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                {shouldShowRegisterDialog && <RegisterDrawerDialog />}
+                 {/* If user is volunteer, show log time form button */}
+                 {/* Top right button, only if form is NOT shown */}
+                 {!showForm && isUserVolunteer && (
+                    <div className='flex justify-end'>
+                        <Button 
+                            variant="default"
+                            className="bg-[#C8A74B]"
+                            onClick={() => setShowForm(true)}
+                        >
+                            <Plus /> Log in your Hours
+                        </Button>
+                    </div>
+                 )}
+                 {/* Show form centered if visible */}
+                 {showForm && isUserVolunteer && (
+                    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm'>
+                        <div className="relative w-full max-w-lg mx-auto p-4">
+                            <div className="relative bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6">
+                            {/* Make a close button */}
+                            <button
+                              onClick={() => setShowForm(false)}
+                              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                            >
+                              ✕
+                            </button>
+                    <VolunteerLogTimeForm
+                        onClose={() => setShowForm(false)}
+                        className='w-full'
+                    />
+                    </div>
+                    </div>
+                    </div>
+                 )}
+                {/* If user is organisation admin, show create events button */}
+                 {/* Top right button, only if form is NOT shown */}
+                 {!showForm && isUserOrgAdmin && (
+                    <div className='flex justify-end'>
+                        <Button 
+                            variant="default"
+                            className="bg-[#C8A74B]"
+                            onClick={() => setShowForm(true)}
+                        >
+                            <Plus /> Create New Event
+                        </Button>
+                    </div>
+                 )}
+                 {/* Show form centered if visible */}
+                 {showForm && isUserOrgAdmin && ( 
+                    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm'>
+                        <div className="relative w-full max-w-lg mx-auto p-4">
+                            <div className="relative bg-white dark:bg-zinc-900 rounded-xl shadow-xl p-6">
+                            {/* Make a close button */}
+                            <button
+                              onClick={() => setShowForm(false)}
+                              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                            >
+                              ✕
+                            </button>
+                    <EventCreationForm
+                        onClose={() => setShowForm(false)}
+                        className='w-full'
+                    />
+                    </div>
+                    </div>
+                    </div>
+                 )}
                 <div className="scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-transparent flex gap-4 overflow-x-auto pb-4">
                     {allEvents.map((event) => (
                         <EventCard key={event.eventId} event={event} onClick={setSelectedEvent} />

@@ -123,7 +123,7 @@ export default function EventCreationForm({ className }: React.ComponentProps<'f
 
     return (
       <form
-      className={cn('grid items-start gap-4', className)}
+      className={cn('grid max-h-[60vh] items-start gap-4 overflow-y-auto', className)}
       onSubmit={handleSubmit}
       noValidate
       >

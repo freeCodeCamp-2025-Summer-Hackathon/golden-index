@@ -112,7 +112,7 @@ export default function VolunteerLogTimeForm({ className }: React.ComponentProps
     };
 
     return (
-        <form className={cn('grid items-start gap-4', className)} onSubmit={handleSubmit} noValidate>
+        <form className={cn('grid max-h-[60vh] items-start gap-4 overflow-y-auto', className)} onSubmit={handleSubmit} noValidate>
             {error && <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-900/20 dark:text-red-200">{error}</div>}
             <Card className="w-full max-w-sm">
                 <CardHeader>
