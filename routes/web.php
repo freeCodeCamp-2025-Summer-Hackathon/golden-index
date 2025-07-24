@@ -13,5 +13,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('my-events', function () {
+        return Inertia::render('my-events');
+    })->name('my-events');
+});
+
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
