@@ -17,7 +17,7 @@ use ApiPlatform\Metadata\Delete;
 
 use App\Contracts\BelongsToUser;
 use App\Traits\AutoAssignsUserId;
-use App\Api\State\AssignUserProcessor;
+use App\Api\State\AssignEventRegistrationUserProcessor;
 
 #[ApiResource( 
     operations: [
@@ -25,7 +25,7 @@ use App\Api\State\AssignUserProcessor;
         new Get(security: "is_granted('super-admin') or is_granted('volunteer')"),
         new Post(
             security: "is_granted('super-admin') or is_granted('user')",
-            processor: AssignUserProcessor::class
+            processor: AssignEventRegistrationUserProcessor::class
         ),
         new Patch(security: "is_granted('super-admin') or is_granted('volunteer')"),
         new Delete(security: "is_granted('super-admin')")
