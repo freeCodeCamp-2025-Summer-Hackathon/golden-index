@@ -6,6 +6,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Organisation;
 use App\Models\Event;
 use App\Models\VolunteerTimeLog;
+use App\Models\EventRegistration;
 
 
 Route::get('/user', function (Request $request) {
@@ -155,3 +156,25 @@ Route::get('/organisations', function (Request $request) {
     return Organisation::all();
 })->middleware('auth:api');
 
+// to get all event registrations
+Route::get('/event_registration', function (Request $request) {
+    return EventRegistration::all();
+})->middleware('auth:api');
+
+// ['user_id', 'event_id', 'event_registration_status', 'created_at', 'updated_at', 'approved_at', 'notes'];
+
+Route::post('/event_registration', function (Request $request) {
+    $validated = $request->validate([
+        'user_id' => 'required|uuid|exists:users, user_id',
+        'event_id' => 'required|uuid|exists:events,event_id',
+        'event_registration_status' => 'required|string|in:pending,approved, rejected',
+        'notes' => 'nullable|string'
+    ]);
+    $registration = EventRegistration::create([
+        'user_id' => $validated['user_id'],
+        'event_id' => $validated['event_id'],
+        'event_registration_status' => $validated['event_registration_status'],
+        'notes' => $validated['notes'],
+    ]);
+  return response()->json($registration, 201);
+})->middleware('auth:api');

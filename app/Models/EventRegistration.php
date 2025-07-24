@@ -1,14 +1,40 @@
 <?php
 
 namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use ApiPlatform\Metadata\ApiResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Traits\HasUuid;
+use Spatie\Permission\Traits\HasRoles;
+// API requests
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
 
-#[ApiResource]
+use App\Contracts\BelongsToUser;
+use App\Traits\AutoAssignsUserId;
+use App\Api\State\AssignEventRegistrationUserProcessor;
+
+#[ApiResource( 
+    operations: [
+        new GetCollection(security: "is_granted('super-admin') or is_granted('volunteer')"),
+        new Get(security: "is_granted('super-admin') or is_granted('volunteer')"),
+        new Post(
+            security: "is_granted('super-admin') or is_granted('user')",
+            processor: AssignEventRegistrationUserProcessor::class
+        ),
+        new Patch(security: "is_granted('super-admin') or is_granted('volunteer')"),
+        new Delete(security: "is_granted('super-admin')")
+    ]
+)]
+
 class EventRegistration extends Model
 {
+    use HasFactory;
     use HasUuid;
 
     protected $table = 'event_registration';

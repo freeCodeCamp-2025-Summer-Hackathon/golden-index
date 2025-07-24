@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             EventStatusSeeder::class,
             EventSeeder::class,
             VolunteerTimeLogSeeder::class,
+            EventRegistrationSeeder::class,
         ]);
 
         User::firstOrCreate(
@@ -46,6 +47,14 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Williams Akanni',
                 'password' => Hash::make('hznKq3YXPSvJgFR'),
+            ]
+        );
+
+        User::firstOrCreate(
+            ['email' => 'adnanakbar.0207@gmail.com'],
+            [
+                'name' => 'Adnan Akbar',
+                'password' => Hash::make('A9fX&2bQ7mL6T1z'),
             ]
         );
     }
