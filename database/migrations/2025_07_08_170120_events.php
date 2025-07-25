@@ -25,7 +25,7 @@ return new class extends Migration
             $table->integer('current_volunteers')->default(0);
             $table->boolean('is_urgent')->default(false);
             $table->string('recurrence_pattern')->nullable();
-            $table->unsignedBigInteger('category_id')->nullable();
+            $table->unsignedBigInteger('category_id')->nullable()->default(1); // Assuming 1 is the default category ID change later after MVP
             $table->unsignedBigInteger('event_status_id')->nullable()->default(1); // Assuming 1 is the default status ID
             $table->boolean('is_high_risk')->default(false);
             $table->boolean('is_group_friendly')->default(false);
