@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\EventStatus;
+use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -19,6 +20,7 @@ class EventFactory extends Factory
     public function definition(): array
     {
         $statusId = \DB::table('event_status')->inRandomOrder()->value('event_status_id') ?: 1;
+        $categoryId = \DB::table('categories')->inRandomOrder()->value('category_id') ?: 1;
     
     if (!$statusId) {
         throw new \Exception('No event_status found! Please seed event_status table first.');
@@ -37,7 +39,7 @@ class EventFactory extends Factory
             'current_volunteers' => $this->faker->numberBetween(0, 20), 
             'is_urgent' => $this->faker->boolean(),
             'recurrence_pattern' => $this->faker->randomElement(['daily', 'weekly', 'monthly', 'none']),
-            'category_id' => $this->faker->uuid(),
+            'category_id' => $categoryId,
             'event_status_id' => $statusId, 
             'is_high_risk' => $this->faker->boolean(),
             'is_group_friendly' => $this->faker->boolean(),

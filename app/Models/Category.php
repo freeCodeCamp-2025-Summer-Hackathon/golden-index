@@ -8,10 +8,12 @@ class Category extends Model
 {
     protected $table = "categories";
     protected $primaryKey = 'category_id';  // Custom primary key
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
-        'name',
-        'description',
+        'category_name',
+        'category_description',
     ];
 
     /**

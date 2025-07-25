@@ -10,6 +10,9 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiResource;
+use App\Traits\HasUuid;
+use Illuminate\Support\Facades\Log;
+use ApiPlatform\Metadata\ApiProperty;
 
 #[ApiResource( 
     operations: [
@@ -23,12 +26,21 @@ use ApiPlatform\Metadata\ApiResource;
 )]
 class Event extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuid;
 
     protected $table = 'events';
     protected $primaryKey = 'event_id';
     protected $keyType = 'uuid';
     public $incrementing = false;
+
+    #[ApiProperty(writable: true)]
+    public $organisation_id;
+
+    #[ApiProperty(writable: true)]  
+    public $category_id;
+
+    #[ApiProperty(writable: true)]
+    public $event_status_id;
 
     /**
      * The attributes that are mass assignable.
@@ -85,9 +97,9 @@ class Event extends Model
     ];
 
     /**
-     * Get the organization that owns the event.
+     * Get the organisation that owns the event.
      */
-    public function organization(): BelongsTo
+    public function organisation(): BelongsTo
     {
         return $this->belongsTo(Organisation::class, 'organisation_id');
     }
@@ -143,4 +155,27 @@ class Event extends Model
 
         return $this->current_volunteers < $this->max_volunteers;
     }
+
+    public function registeredVolunteers()
+    {
+        return $this->belongsToMany(Volunteer::class, 'event_registrations', 'event_id', 'volunteer_id')
+                    ->withTimestamps();
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($event) {
+            //dump('Raw input to model create:', $event->getAttributes());
+            
+            // Force fill the missing attributes
+            $event->forceFill([
+                'organisation_id' => request('organisation_id'),
+                'category_id' => request('category_id'),
+                'event_status_id' => request('event_status_id'),
+            ]);
+
+            //dump('After forceFill:', $event->getAttributes());
+        });
+    }
+
 }
