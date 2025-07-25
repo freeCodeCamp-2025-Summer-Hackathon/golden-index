@@ -14,8 +14,6 @@ return new class extends Migration {
             $table->id('category_id');
             $table->string('category_name');
             $table->text('category_description');
-            $table->timestamp('created_at');
-            $table->timestamp('updated_at');
         });
     }
 
