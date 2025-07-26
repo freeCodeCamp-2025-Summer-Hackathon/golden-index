@@ -31,51 +31,6 @@ Route::post('/volunteers', function (Request $request) {
     ]);
 })->middleware('auth:api');
 
-//Route::post('/events', function (Request $request) {
-//    $validated = $request->validate([
-//        'organisation_id' => 'required|uuid|exists:organisations,organisation_id',
-//        'event_title' => 'required|string|max:255',
-//        'event_description' => 'nullable|string',
-//        'start_datetime' => 'required|date',
-//        'end_datetime' => 'required|date|after_or_equal:start_datetime',
-//        'location' => 'nullable|string|max:255',
-//        'event_address' => 'nullable|string|max:255',
-//        'is_virtual' => 'boolean',
-//        'max_volunteers' => 'required|integer|min:1',
-//        'current_volunteers' => 'integer|min:0',
-//        'is_urgent' => 'boolean',
-//        'recurrence_pattern' => 'nullable|string|in:daily,weekly,monthly,none',
-//        'category_id' => 'nullable|uuid',
-//        'event_status_id' => 'nullable|uuid', // fix to uuid
-//        'is_high_risk' => 'boolean',
-//        'is_group_friendly' => 'boolean',
-//        'required_skills' => 'nullable|array',
-//    ]);
-//    
-//    $event = Event::create([
-//        //'event_id' => $request->input('event_id', (string) Str::uuid()),  // or rely on HasUuid trait
-//        'organisation_id' => $validated['organisation_id'],
-//        'event_title' => $validated['event_title'],
-//        'event_description' => $validated['event_description'] ?? null,
-//        'start_datetime' => $validated['start_datetime'],
-//        'end_datetime' => $validated['end_datetime'],
-//        'location' => $validated['location'] ?? null,
-//        'event_address' => $validated['event_address'] ?? null,
-//        'is_virtual' => $validated['is_virtual'] ?? false,
-//        'max_volunteers' => $validated['max_volunteers'],
-//        'current_volunteers' => $validated['current_volunteers'] ?? 0,
-//        'is_urgent' => $validated['is_urgent'] ?? false,
-//        'recurrence_pattern' => $validated['recurrence_pattern'] ?? 'none',
-//        'category_id' => $validated['category_id'] ?? null,
-//        'event_status_id' => $validated['event_status_id'] ?? null,
-//        'is_high_risk' => $validated['is_high_risk'] ?? false,
-//        'is_group_friendly' => $validated['is_group_friendly'] ?? false,
-//        'required_skills' => $validated['required_skills'] ?? [],
-//    ]);
-//
-//    return response()->json($event, 201);
-//})->middleware('auth:api');
-
 Route::post('/volunteer-time-log', function (Request $request) {
     $validated = $request->validate([
         'volunteer_time_log_id' => 'required|uuid',
