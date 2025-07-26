@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('event_status', function (Blueprint $table) {
-            $table->integer('event_status_id')->primary()->autoIncrement();
+            $table->integer('event_status_id')->autoIncrement();
             $table->string('event_status_name', 20);
             $table->string('description', 200)->nullable();
             $table->timestamps();
