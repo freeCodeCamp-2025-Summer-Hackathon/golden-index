@@ -89,6 +89,66 @@ class Event extends Model
         'current_volunteers' => 'integer',
     ];
 
+    #[Groups(['event:read', 'event:write'])]
+    protected $event_id;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $organisation_id;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $event_title;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $event_description;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $start_datetime;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $end_datetime;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $location;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $event_address;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $is_virtual;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $max_volunteers;
+
+    #[Groups(['event:read'])]
+    protected $current_volunteers;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $is_urgent;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $recurrence_pattern;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $category_id;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $event_status_id;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $is_high_risk;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $is_group_friendly;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $required_skills;
+
+    #[Groups(['event:read'])]
+    protected $created_at;
+
+    #[Groups(['event:read'])]
+    protected $updated_at;
+
     // Relationships - NO Groups attributes here
     public function organisation(): BelongsTo
     {
