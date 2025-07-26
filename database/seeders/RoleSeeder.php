@@ -2,33 +2,38 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
 
-
 class RoleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
+        // Create roles first
         Role::firstOrCreate(['name' => 'super-admin']);
         Role::firstOrCreate(['name' => 'organisation-admin']);
         Role::firstOrCreate(['name' => 'volunteer']);
         Role::firstOrCreate(['name' => 'event-organiser']);
         Role::firstOrCreate(['name' => 'user']);
 
-        $user = User::where('email', 'shirleen@duck.com')->first();
-        $user = User::where('email', 'vero.mestre11@gmail.com')->first();
+        // Assign roles to existing users
+        $roleAssignments = [
+            'shirleen@duck.com' => 'super-admin',
+            'vero.mestre11@gmail.com' => 'super-admin',
+            'shirleenjvr@gmail.com' => 'organisation-admin',
+            'shirleen@redpecil.dev' => 'volunteer',
+            'akanniwilliams@gmail.com' => 'volunteer',
+        ];
 
-        if ($user) {
-            $user->assignRole('super-admin');
-            echo "User assigned super-admin role.";
-        } else {
-            echo "User not found.";
+        foreach ($roleAssignments as $email => $roleName) {
+            $user = User::where('email', $email)->first();
+            if ($user) {
+                $user->assignRole($roleName);
+                $this->command->info("Role '{$roleName}' assigned to {$user->email}");
+            } else {
+                $this->command->warn("User with email {$email} not found");
+            }
         }
     }
 }
