@@ -33,7 +33,8 @@ use App\Api\State\EventProcessor;
         ),
         new Patch(
             security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')",
-            description: 'Update an existing event'
+            description: 'Update an existing event',
+            processor: EventProcessor::class,
         ),
         new Delete(
             security: "is_granted('super-admin')",

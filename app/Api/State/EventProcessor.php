@@ -1,49 +1,42 @@
 <?php
 
-namespace App\Api\State\Processors;
+namespace App\Api\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Models\Event;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EventProcessor implements ProcessorInterface
 {
+    public function __construct(private Request $request)
+    {
+    }
+
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Event
     {
         /** @var Event $data */
         
-        // Convert the model to array for validation, including both attributes and fillable properties
-        $dataArray = [];
+        // Get raw request data directly
+        $requestData = $this->request->all();
         
-        // Get all fillable fields from the model
-        foreach ($data->getFillable() as $field) {
-            if (isset($data->$field)) {
-                $dataArray[$field] = $data->$field;
-            }
-        }
+        Log::info('EventProcessor - Raw request data:', $requestData);
+        Log::info('EventProcessor - Model data before fill:', [
+            'attributes' => $data->getAttributes(),
+            'fillable' => $data->getFillable(),
+        ]);
         
-        // Also check the raw attributes
-        $attributes = $data->getAttributes();
-        $dataArray = array_merge($dataArray, $attributes);
+        // Fill the model with request data
+        $data->fill($requestData);
         
-        // Validation rules
-        $rules = [
-            'organisation_id' => ['required', 'uuid', 'exists:organisations,organisation_id'],
-            'event_title'     => ['required', 'string', 'max:100'],
-            'start_datetime'  => ['required', 'date'],
-            'end_datetime'    => ['required', 'date', 'after:start_datetime'],
-            'location'        => ['required', 'string'],
-            'event_status_id' => ['required', 'integer', 'exists:event_status,event_status_id'],
-        ];
-
-        $validator = Validator::make($dataArray, $rules);
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
-        // Set system fields for new records
+        Log::info('EventProcessor - Model data after fill:', [
+            'attributes' => $data->getAttributes(),
+            'organisation_id' => $data->organisation_id ?? 'NOT_SET',
+            'event_title' => $data->event_title ?? 'NOT_SET',
+        ]);
+        
+        // Set system fields
         if (!$data->event_id) {
             $data->event_id = (string) \Illuminate\Support\Str::uuid();
         }
@@ -52,9 +45,30 @@ class EventProcessor implements ProcessorInterface
             $data->current_volunteers = 0;
         }
 
+        // Validate required fields
+        $required = ['organisation_id', 'event_title', 'start_datetime', 'end_datetime', 'location', 'event_status_id'];
+        $missing = [];
+        
+        foreach ($required as $field) {
+            if (empty($data->$field)) {
+                $missing[] = $field;
+            }
+        }
+        
+        if (!empty($missing)) {
+            Log::error('Missing required fields:', [
+                'missing' => $missing,
+                'request_data' => $requestData,
+                'model_data' => $data->getAttributes()
+            ]);
+            throw new \InvalidArgumentException('Missing required fields: ' . implode(', ', $missing));
+        }
+
         // Save the event
         $data->saveOrFail();
-
+        
+        Log::info('Event saved successfully:', ['event_id' => $data->event_id]);
+        
         return $data;
     }
 }
