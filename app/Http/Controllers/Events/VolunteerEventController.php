@@ -14,7 +14,7 @@ class VolunteerEventController extends Controller
 
         $events = $volunteer->registeredEvents()
             ->upcoming()
-            ->with('organization', 'status', 'category')
+            ->with('organisation', 'status', 'category')
             ->get();
 
         return response()->json($events);
@@ -26,7 +26,7 @@ class VolunteerEventController extends Controller
 
         $events = $volunteer->registeredEvents()
             ->past()
-            ->with('organization', 'status', 'category')
+            ->with('organisation', 'status', 'category')
             ->get();
 
         return response()->json($events);

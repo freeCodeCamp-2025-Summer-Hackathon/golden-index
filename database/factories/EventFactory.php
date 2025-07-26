@@ -28,7 +28,7 @@ class EventFactory extends Factory
         $endDate = $this->faker->dateTimeBetween($startDate, $startDate->format('Y-m-d H:i:s') . ' +8 hours');
 
         return [
-            'organization_id' => Organisation::factory(),
+            'organisation_id' => Organisation::factory(),
             'event_title' => $this->faker->sentence(4),
             'event_description' => $this->faker->paragraphs(3, true),
             'start_datetime' => $startDate,

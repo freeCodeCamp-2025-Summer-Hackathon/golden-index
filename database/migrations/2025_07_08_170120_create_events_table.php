@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->uuid('event_id')->primary();
-            $table->uuid('organization_id');
+            $table->uuid('organisation_id');
             $table->string('event_title', 100);
             $table->text('event_description')->nullable();
             $table->timestamp('start_datetime');
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Foreign keys
-            $table->foreign('organization_id')->references('organisation_id')->on('organisations');
+            $table->foreign('organisation_id')->references('organisation_id')->on('organisations');
             $table->foreign('category_id')->references('category_id')->on('categories');
             $table->foreign('event_status_id')->references('event_status_id')->on('event_status');
             
@@ -42,7 +42,7 @@ return new class extends Migration
             $table->index('event_status_id');
             $table->index('category_id');
             $table->index('is_urgent');
-            $table->index('organization_id');
+            $table->index('organisation_id');
         });
     }
 

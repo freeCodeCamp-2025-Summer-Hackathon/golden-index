@@ -22,7 +22,7 @@ class StoreEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'organization_id' => ['required', 'uuid', 'exists:organisations,organisation_id'],
+            'organisation_id' => ['required', 'uuid', 'exists:organisations,organisation_id'],
             'event_title' => ['required', 'string', 'max:100'],
             'event_description' => ['nullable', 'string'],
             'start_datetime' => ['required', 'date', 'after:now'],
@@ -47,7 +47,7 @@ class StoreEventRequest extends FormRequest
         return [
             'start_datetime.after' => 'The event must start in the future.',
             'end_datetime.after' => 'The event must end after it starts.',
-            'organization_id.exists' => 'The selected organization does not exist.',
+            'organisation_id.exists' => 'The selected organisation does not exist.',
         ];
     }
 }

@@ -59,7 +59,7 @@ class EventSeeder extends Seeder
                 ->state([
                     'event_status_id' => $publishedStatus->event_status_id,
                     'category_id' => $categories->random()->category_id,
-                    'organization_id' => Organisation::inRandomOrder()->first()->organisation_id,
+                    'organisation_id' => Organisation::inRandomOrder()->first()->organisation_id,
                 ])
                 ->create();
 
@@ -70,7 +70,7 @@ class EventSeeder extends Seeder
                 ->state([
                     'event_status_id' => $publishedStatus->event_status_id,
                     'category_id' => $categories->random()->category_id,
-                    'organization_id' => Organisation::inRandomOrder()->first()->organisation_id,
+                    'organisation_id' => Organisation::inRandomOrder()->first()->organisation_id,
                 ])
                 ->create();
 
@@ -80,7 +80,7 @@ class EventSeeder extends Seeder
                 ->state([
                     'event_status_id' => $publishedStatus->event_status_id,
                     'category_id' => $categories->random()->category_id,
-                    'organization_id' => Organisation::inRandomOrder()->first()->organisation_id,
+                    'organisation_id' => Organisation::inRandomOrder()->first()->organisation_id,
                 ])
                 ->create();
         }

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Symfony\Component\Serializer\Attribute\Groups;
+use App\Api\State\EventProcessor;
 
 #[ApiResource(
     operations: [
@@ -27,7 +28,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
         ),
         new Post(
             security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')",
-            description: 'Create a new event'
+            description: 'Create a new event',
+            processor: EventProcessor::class,
         ),
         new Patch(
             security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')",
@@ -55,7 +57,7 @@ class Event extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'organization_id',
+        'organisation_id',
         'event_title',
         'event_description',
         'start_datetime',
@@ -89,7 +91,7 @@ class Event extends Model
     // Relationships - NO Groups attributes here
     public function organisation(): BelongsTo
     {
-        return $this->belongsTo(Organisation::class, 'organization_id', 'organisation_id');
+        return $this->belongsTo(Organisation::class, 'organisation_id', 'organisation_id');
     }
 
     public function category(): BelongsTo
@@ -119,7 +121,7 @@ class Event extends Model
                     ->withTimestamps();
     }
 
-    // Accessor methods - Groups CAN be applied here
+    // Keep only these accessor methods - these work fine
     #[Groups(['event:read'])]
     public function getIsFullAttribute(): bool
     {
@@ -138,26 +140,12 @@ class Event extends Model
         return $this->start_datetime->diffInHours($this->end_datetime);
     }
 
-    // You can create getter methods for relationships if needed
-    #[Groups(['event:read'])]
-    public function getOrganisationAttribute()
-    {
-        return $this->organisation();
-    }
+    // REMOVE THESE PROBLEMATIC METHODS:
+    // public function getOrganisationAttribute()
+    // public function getCategoryAttribute() 
+    // public function getEventStatusAttribute()
 
-    #[Groups(['event:read'])]
-    public function getCategoryAttribute()
-    {
-        return $this->category();
-    }
-
-    #[Groups(['event:read'])]
-    public function getEventStatusAttribute()
-    {
-        return $this->eventStatus();
-    }
-
-    // Scopes
+    // Scopes remain the same
     public function scopeActive($query)
     {
         return $query->whereHas('eventStatus', function ($q) {
