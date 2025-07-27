@@ -1,7 +1,10 @@
+import EventCreationForm from '@/components/event-creation-model';
 import { EventCard, EventType } from '@/components/events-card';
 import RegisterDrawerDialog from '@/components/register-drawer-dialog';
+import ToggleFormModalButton from '@/components/toggle-form-modal-button';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import VolunteerLogTimeForm from '@/components/volunteer-logtime-form-model';
 import AppLayout from '@/layouts/app-layout';
 import useEventStore from '@/store/eventStore';
 import { type BreadcrumbItem, type SharedData } from '@/types';
@@ -16,123 +19,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// Dummy data fetching function (synchronous)
-// function getEvents(): EventType[] {
-
-//   // return [
-//   //   {
-//   //     event_id: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-//   //     organization_id: "org123",
-//   //     event_title: "Community Garden Cleanup",
-//   //     event_description: "Help us beautify the local community garden by weeding, planting, and general tidying.",
-//   //     startDatetime: "2025-08-10T09:00:00Z",
-//   //     endDatetime: "2025-08-10T13:00:00Z",
-//   //     location: "Central Park Community Garden",
-//   //     event_address: "123 Garden Lane, Cityville",
-//   //     isVirtual: false,
-//   //     maxVolunteers: 20,
-//   //     currentVolunteers: 12,
-//   //     isUrgent: false,
-//   //     recurrence_pattern: null,
-//   //     category_id: 1,
-//   //     event_status_id: 1,
-//   //     is_high_risk: false,
-//   //     isGroupFriendly: true,
-//   //     requiredSkills: ["Gardening", "Teamwork"],
-//   //     created_at: "2025-07-01T10:00:00Z",
-//   //     updated_at: "2025-07-05T11:00:00Z",
-//   //   },
-//   //   {
-//   //     event_id: "b2c3d4e5-f6a7-7890-1234-567890abcdef0",
-//   //     organization_id: "org124",
-//   //     event_title: "Online Tutoring Session",
-//   //     event_description: "Provide academic support to students in various subjects via video call.",
-//   //     startDatetime: "2025-08-15T14:00:00Z",
-//   //     endDatetime: "2025-08-15T16:00:00Z",
-//   //     location: "Online",
-//   //     event_address: null,
-//   //     isVirtual: true,
-//   //     maxVolunteers: 10,
-//   //     currentVolunteers: 8,
-//   //     isUrgent: true,
-//   //     recurrence_pattern: "Weekly",
-//   //     category_id: 2,
-//   //     event_status_id: 1,
-//   //     is_high_risk: false,
-//   //     isGroupFriendly: false,
-//   //     requiredSkills: ["Teaching", "Communication"],
-//   //     created_at: "2025-07-02T12:00:00Z",
-//   //     updated_at: "2025-07-06T13:00:00Z",
-//   //   },
-//   //   {
-//   //     event_id: "c3d4e5f6-a7b8-9012-3456-7890abcdef01",
-//   //     organization_id: "org125",
-//   //     event_title: "Food Bank Distribution",
-//   //     event_description: "Assist with sorting and distributing food items to families in need.",
-//   //     startDatetime: "2025-08-20T10:00:00Z",
-//   //     endDatetime: "2025-08-20T15:00:00Z",
-//   //     location: "Downtown Food Bank",
-//   //     event_address: "456 Main Street, Townsville",
-//   //     isVirtual: false,
-//   //     maxVolunteers: 30,
-//   //     currentVolunteers: 25,
-//   //     isUrgent: false,
-//   //     recurrence_pattern: null,
-//   //     category_id: 3,
-//   //     event_status_id: 1,
-//   //     is_high_risk: false,
-//   //     isGroupFriendly: true,
-//   //     requiredSkills: ["Lifting", "Organization"],
-//   //     created_at: "2025-07-03T09:00:00Z",
-//   //     updated_at: "2025-07-07T10:00:00Z",
-//   //   },
-//   //   {
-//   //     event_id: "d4e5f6a7-b8c9-0123-4567-890abcdef02",
-//   //     organization_id: "org123",
-//   //     event_title: "Park Beautification Day",
-//   //     event_description: "Join us to clean up litter and plant new trees in Oakwood Park.",
-//   //     startDatetime: "2025-08-25T08:30:00Z",
-//   //     endDatetime: "2025-08-25T12:30:00Z",
-//   //     location: "Oakwood Park",
-//   //     event_address: "789 Park Ave, Villageton",
-//   //     isVirtual: false,
-//   //     maxVolunteers: 15,
-//   //     currentVolunteers: 15,
-//   //     isUrgent: true,
-//   //     recurrence_pattern: null,
-//   //     category_id: 1,
-//   //     event_status_id: 1,
-//   //     is_high_risk: false,
-//   //     isGroupFriendly: true,
-//   //     requiredSkills: ["Outdoor Work"],
-//   //     created_at: "2025-07-04T14:00:00Z",
-//   //     updated_at: "2025-07-08T15:00:00Z",
-//   //   },
-//   //   {
-//   //     event_id: "e5f6a7b8-c9d0-1234-5678-90abcdef03",
-//   //     organization_id: "org126",
-//   //     event_title: "Senior Companion Calls",
-//   //     event_description: "Make friendly phone calls to isolated seniors to provide companionship.",
-//   //     startDatetime: "2025-08-28T11:00:00Z",
-//   //     endDatetime: "2025-08-28T13:00:00Z",
-//   //     location: "Remote",
-//   //     event_address: null,
-//   //     isVirtual: true,
-//   //     maxVolunteers: 8,
-//   //     currentVolunteers: 3,
-//   //     isUrgent: false,
-//   //     recurrence_pattern: "Bi-weekly",
-//   //     category_id: 4,
-//   //     event_status_id: 1,
-//   //     is_high_risk: false,
-//   //     isGroupFriendly: false,
-//   //     requiredSkills: ["Communication", "Empathy"],
-//   //     created_at: "2025-07-05T10:00:00Z",
-//   //     updated_at: "2025-07-09T11:00:00Z",
-//   //   },
-//   // ];
-// }
-
 // Function to filter events based on organisation ID
 const filterOrganisationEvents = (events: EventType[], organisationId: string) => {
     return events.filter((event) => {
@@ -143,10 +29,14 @@ const filterOrganisationEvents = (events: EventType[], organisationId: string) =
 
 export default function Dashboard() {
     const { auth } = usePage<SharedData>().props;
-    console.log('Auth:', auth.user);
+    console.log('within Dashboard Auth:', auth);
     const { events, fetchEvents, hasFetched } = useEventStore();
+    const isUserOrgAdmin = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'organisation-admin';
+    const isUserVolunteer = auth.user?.roles?.length > 0 && auth.user.roles[0] === 'volunteer';
 
-    const filteredEvents = filterOrganisationEvents(events, auth?.user?.organisationId || '');
+    // const filteredEvents = filterOrganisationEvents(events, auth?.user?.organisationId || '');
+
+    console.log('Events:', events);
 
     useEffect(() => {
         if (!hasFetched && auth?.token) {
@@ -154,7 +44,7 @@ export default function Dashboard() {
         }
     }, [hasFetched, auth?.token, fetchEvents]);
 
-    const allEvents = filteredEvents;
+    const allEvents = events;
 
     // console.log(allEvents);
     // console.log("Auth", auth);
@@ -177,6 +67,16 @@ export default function Dashboard() {
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 {shouldShowRegisterDialog && <RegisterDrawerDialog />}
+
+                {isUserVolunteer && (
+                    <ToggleFormModalButton buttonLabel="Log in your Hours" buttonClassName="bg-[#C8A74B]" FormComponent={VolunteerLogTimeForm} />
+                )}
+                {/* If user is organisation admin, show create events button */}
+                {/* Top right button, only if form is NOT shown */}
+                {isUserOrgAdmin && (
+                    <ToggleFormModalButton buttonLabel="Create New Event" buttonClassName="bg-[#C8A74B]" FormComponent={EventCreationForm} />
+                )}
+
                 <div className="scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-transparent flex gap-4 overflow-x-auto pb-4">
                     {allEvents.map((event) => (
                         <EventCard key={event.eventId} event={event} onClick={setSelectedEvent} />
