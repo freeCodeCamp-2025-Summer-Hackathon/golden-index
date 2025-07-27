@@ -11,17 +11,18 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // First create the foundational data
+        // First create foundational data INCLUDING roles
         $this->call([
             PermissionSeeder::class,
-            EventStatusSeeder::class,
+            RoleSeeder::class,
             OrganisationSeeder::class,
+            EventStatusSeeder::class,
+            EventSeeder::class,
             VolunteerSeeder::class,
             VolunteerTimeLogSeeder::class,
-            EventSeeder::class,
         ]);
 
-        // Create users with ONLY the fields that exist in your table
+        // Create users with roles (roles now exist)
         $users = [
             [
                 'email' => 'shirleen@duck.com',
@@ -66,14 +67,9 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            // Assign role using Spatie (this stores in separate tables)
+            // Assign role using Spatie (roles now exist)
             $user->assignRole($userData['role']);
             $this->command->info("Created user {$user->email} with role {$userData['role']}");
         }
-
-        // Assign roles after users are created
-        $this->call([
-            RoleSeeder::class,
-        ]);
     }
 }
