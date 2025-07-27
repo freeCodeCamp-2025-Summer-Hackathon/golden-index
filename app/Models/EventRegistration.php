@@ -17,15 +17,15 @@ use ApiPlatform\Metadata\Delete;
 
 use App\Contracts\BelongsToUser;
 use App\Traits\AutoAssignsUserId;
-use App\Api\State\AssignEventRegistrationUserProcessor;
+use App\Api\State\AssignUserProcessor;
 
 #[ApiResource( 
     operations: [
         new GetCollection(security: "is_granted('super-admin') or is_granted('volunteer')"),
         new Get(security: "is_granted('super-admin') or is_granted('volunteer')"),
         new Post(
-            security: "is_granted('super-admin') or is_granted('user')",
-            processor: AssignEventRegistrationUserProcessor::class
+            security: "is_granted('super-admin') or is_granted('volunteer')",
+            processor: AssignUserProcessor::class
         ),
         new Patch(security: "is_granted('super-admin') or is_granted('volunteer')"),
         new Delete(security: "is_granted('super-admin')")
@@ -34,11 +34,10 @@ use App\Api\State\AssignEventRegistrationUserProcessor;
 
 class EventRegistration extends Model
 {
-    use HasFactory;
-    use HasUuid;
+    use HasFactory, HasUuid, HasRoles, AutoAssignsUserId;
 
     protected $table = 'event_registration';
-    protected $primaryKey = 'registration_id';
+    protected $primaryKey = 'event_registration_id';
     protected $keyType = 'string';
     public $incrementing = false;
 
@@ -53,18 +52,12 @@ class EventRegistration extends Model
     /**
      * Get the user that owns the registration.
      */
-    public function user(): BelongsTo
+     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+        return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the event that the registration belongs to.
-     */
-    public function event(): BelongsTo
-    {
-        return $this->belongsTo(Event::class, 'event_id', 'event_id');
-    }
+
 }
 
 
