@@ -134,8 +134,8 @@ export default function VolunteerLogTimeForm({ className }: Props) {
                             <SelectContent>
                                 {events.length > 0 &&
                                     events.map((event) => (
-                                        <SelectItem key={event.eventId} value={event.eventId}>
-                                            {event.eventTitle}
+                                        <SelectItem key={event.event_id} value={event.event_id}>
+                                            {event.event_title}
                                         </SelectItem>
                                     ))}
                             </SelectContent>

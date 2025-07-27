@@ -46,8 +46,8 @@ export default function MyEvents() {
 
     const now = new Date();
     const defaultUpcomingEvent = allEvents
-        .filter((event) => new Date(event.startDatetime) > now)
-        .sort((a, b) => new Date(a.startDatetime).getTime() - new Date(b.startDatetime).getTime())[0];
+        .filter((event) => new Date(event.start_datetime) > now)
+        .sort((a, b) => new Date(a.start_datetime).getTime() - new Date(b.start_datetime).getTime())[0];
     const [selectedEvent, setSelectedEvent] = useState<EventType | null>(defaultUpcomingEvent || null);
     useEffect(() => {
         if (!selectedEvent && defaultUpcomingEvent) {
@@ -78,7 +78,7 @@ export default function MyEvents() {
 
                 <div className="scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-transparent flex gap-4 overflow-x-auto pb-4">
                     {allEvents.map((event) => (
-                        <EventCard key={event.eventId} event={event} onClick={setSelectedEvent} />
+                        <EventCard key={event.event_id} event={event} onClick={setSelectedEvent} />
                     ))}
                 </div>
 
@@ -89,13 +89,13 @@ export default function MyEvents() {
                                 <CalendarDays className="size-12 md:size-16" />
                             </div>
                             <div className="flex-1">
-                                <h2 className="mb-2 text-2xl font-bold text-foreground md:text-3xl">{selectedEvent.eventTitle}</h2>
-                                <p className="mb-4 line-clamp-3 text-base text-muted-foreground md:text-lg">{selectedEvent.eventDescription}</p>
+                                <h2 className="mb-2 text-2xl font-bold text-foreground md:text-3xl">{selectedEvent.event_title}</h2>
+                                <p className="mb-4 line-clamp-3 text-base text-muted-foreground md:text-lg">{selectedEvent.event_description}</p>
                                 <div className="mb-4 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2 md:text-base">
                                     <div className="flex items-center justify-center gap-2 md:justify-start">
                                         <CalendarDays className="size-4 text-muted-foreground" />
                                         <span>
-                                            {new Date(selectedEvent.startDatetime).toLocaleDateString('en-US', {
+                                            {new Date(selectedEvent.start_datetime).toLocaleDateString('en-US', {
                                                 year: 'numeric',
                                                 month: 'long',
                                                 day: 'numeric',
@@ -105,35 +105,35 @@ export default function MyEvents() {
                                     <div className="flex items-center justify-center gap-2 md:justify-start">
                                         <Info className="size-4 text-muted-foreground" />
                                         <span>
-                                            {new Date(selectedEvent.startDatetime).toLocaleTimeString('en-US', {
+                                            {new Date(selectedEvent.start_datetime).toLocaleTimeString('en-US', {
                                                 hour: '2-digit',
                                                 minute: '2-digit',
                                             })}
                                             {' - '}
-                                            {new Date(selectedEvent.endDatetime).toLocaleTimeString('en-US', {
+                                            {new Date(selectedEvent.end_datetime).toLocaleTimeString('en-US', {
                                                 hour: '2-digit',
                                                 minute: '2-digit',
                                             })}
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-center gap-2 md:justify-start">
-                                        <span>{selectedEvent.isVirtual ? 'Virtual Event' : selectedEvent.location}</span>
+                                        <span>{selectedEvent.is_virtual ? 'Virtual Event' : selectedEvent.location}</span>
                                         <MapPin className="size-4 text-muted-foreground" />
                                     </div>
                                     <Users className="size-4 text-muted-foreground" />
                                     <div className="flex items-center justify-center gap-2 md:justify-start">
                                         <span>
-                                            {selectedEvent.currentVolunteers}
-                                            {selectedEvent.maxVolunteers ? ` / ${selectedEvent.maxVolunteers}` : ''} volunteers
+                                            {selectedEvent.current_volunteers}
+                                            {selectedEvent.max_volunteers ? ` / ${selectedEvent.max_volunteers}` : ''} volunteers
                                         </span>
                                     </div>
                                 </div>
 
                                 <div className="mb-4 flex flex-wrap justify-center gap-2 md:justify-start">
-                                    {selectedEvent.isUrgent && <Badge variant="destructive">Urgent</Badge>}
-                                    {selectedEvent.isVirtual && <Badge variant="secondary">Virtual</Badge>}
-                                    {selectedEvent.isGroupFriendly && <Badge variant="secondary">Group Friendly</Badge>}
-                                    {selectedEvent.requiredSkills?.map((skill) => (
+                                    {selectedEvent.is_urgent && <Badge variant="destructive">Urgent</Badge>}
+                                    {selectedEvent.is_virtual && <Badge variant="secondary">Virtual</Badge>}
+                                    {selectedEvent.is_group_friendly && <Badge variant="secondary">Group Friendly</Badge>}
+                                    {selectedEvent.required_skills?.map((skill) => (
                                         <Badge key={skill} variant="outline">
                                             {skill}
                                         </Badge>
@@ -143,12 +143,12 @@ export default function MyEvents() {
                                 <div className="flex justify-center md:justify-start">
                                     <Button
                                         className="rounded-full bg-[#C8A74B]"
-                                        onClick={() => alert(`Joining event: ${selectedEvent.eventTitle}`)}
+                                        onClick={() => alert(`Joining event: ${selectedEvent.event_title}`)}
                                         variant="default"
                                         size="lg"
-                                        disabled={selectedEvent.currentVolunteers >= (selectedEvent.maxVolunteers ?? Infinity)}
+                                        disabled={selectedEvent.current_volunteers >= (selectedEvent.max_volunteers ?? Infinity)}
                                     >
-                                        {selectedEvent.currentVolunteers >= (selectedEvent.maxVolunteers ?? Infinity) ? 'Event Full' : 'Join Event'}
+                                        {selectedEvent.current_volunteers >= (selectedEvent.max_volunteers ?? Infinity) ? 'Event Full' : 'Join Event'}
                                     </Button>
                                 </div>
                             </div>

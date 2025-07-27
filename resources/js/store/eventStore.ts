@@ -33,8 +33,9 @@ const useEventStore = create<EventStore>((set) => ({
                 }
             });
             if (!res.ok) throw new Error('Failed to fetch events');
-
+            
             const data: EventsResponse = await res.json();
+            // console.log('With UseEventStore data:', data.member);
             set({ events: data.member || [], isLoading: false, hasFetched: true });
         }
         catch (error) {
