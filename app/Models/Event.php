@@ -15,16 +15,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Symfony\Component\Serializer\Attribute\Groups;
 use App\Api\State\EventProcessor;
+use App\Api\State\EventProvider;
 
 #[ApiResource(
     operations: [
         new GetCollection(
             security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')",
-            description: 'Retrieve all events with filtering and pagination support'
+            description: 'Retrieve all events with filtering and pagination support',
+            provider: EventProvider::class
         ),
         new Get(
             security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')",
-            description: 'Retrieve a specific event by ID'
+            description: 'Retrieve a specific event by ID',
+            provider: EventProvider::class
         ),
         new Post(
             security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')",
@@ -145,6 +148,11 @@ class Event extends Model
 
     #[Groups(['event:read'])]
     protected $updated_at;
+
+    public function uniqueIds(): array
+    {
+        return ['event_id'];
+    }
 
     // Relationships - NO Groups attributes here
     public function organisation(): BelongsTo
