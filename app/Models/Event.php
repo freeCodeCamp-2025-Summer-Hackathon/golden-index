@@ -90,9 +90,6 @@ class Event extends Model
     ];
 
     #[Groups(['event:read', 'event:write'])]
-    protected $event_id;
-
-    #[Groups(['event:read', 'event:write'])]
     protected $organisation_id;
 
     #[Groups(['event:read', 'event:write'])]
