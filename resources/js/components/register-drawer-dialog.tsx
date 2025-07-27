@@ -172,6 +172,7 @@ const submitRegistrationData = async (data: VolunteerDataType | OrganisationData
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(data),
@@ -191,7 +192,7 @@ const submitRegistrationData = async (data: VolunteerDataType | OrganisationData
 
             console.log('Registration successful');
             // Refresh the page to update user roles and hide the dialog
-            window.location.reload();
+            // window.location.reload();
             toast('Registration successful');
     }
 

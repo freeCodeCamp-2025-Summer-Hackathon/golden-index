@@ -24,7 +24,7 @@ type Props = React.ComponentProps<'form'> & {
   scrollToTop?: () => void;
 };
 
-export default function VolunteerLogTimeForm({ className }: Props) {
+export default function VolunteerLogTimeForm({ onClose, className }: Props) {
     //Extract auth info (including token) from the global page props via Inertia.js
     const { auth } = usePage<SharedData>().props;
     //Use a custom hook to determine if the screen size is desktop or mobile
@@ -104,7 +104,7 @@ export default function VolunteerLogTimeForm({ className }: Props) {
                 throw new Error(responseData.error || responseData.message || 'Failed to register your volunteering hours');
             }
             //console.log('Volunteer time registration successful');
-            window.location.reload(); // Refresh page to update roles/state
+            // window.location.reload(); // Refresh page to update roles/state
             toast('Volunteering time registration successful');
         } catch (error) {
             console.error('Error registering volunteer time log:', error);
@@ -113,6 +113,7 @@ export default function VolunteerLogTimeForm({ className }: Props) {
             formRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
             setIsSubmitting(false);
+            onClose?.(); // Close the form modal if provided
         }
     };
 
@@ -134,8 +135,8 @@ export default function VolunteerLogTimeForm({ className }: Props) {
                             <SelectContent>
                                 {events.length > 0 &&
                                     events.map((event) => (
-                                        <SelectItem key={event.eventId} value={event.eventId}>
-                                            {event.eventTitle}
+                                        <SelectItem key={event.event_id} value={event.event_id}>
+                                            {event.event_title}
                                         </SelectItem>
                                     ))}
                             </SelectContent>
