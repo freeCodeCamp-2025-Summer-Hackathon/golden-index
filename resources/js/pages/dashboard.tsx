@@ -46,8 +46,7 @@ export default function Dashboard() {
         }
     }, [hasFetched, auth?.token, fetchEvents]);
 
-    let allEvents;
-    isUserOrgAdmin ? allEvents = filteredEvents : allEvents = events;
+    const allEvents = isUserOrgAdmin ? filteredEvents : events;
 
     // console.log(allEvents);
     // console.log("Auth", auth);

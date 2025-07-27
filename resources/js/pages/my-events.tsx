@@ -19,18 +19,17 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 // Function to filter events based on organisation ID
-const filterOrganisationEvents = (events: EventType[], organisationId: string) => {
-    return events.filter((event) => {
-        if (!('organisation_id' in event)) return true; // This line to be removed later when organisation_id is added to Event
-        return event?.organisation_id === organisationId;
-    });
-};
+// const filterOrganisationEvents = (events: EventType[], organisationId: string) => {
+//     return events.filter((event) => {
+//         if (!('organisation_id' in event)) return true; // This line to be removed later when organisation_id is added to Event
+//         return event?.organisation_id === organisationId;
+//     });
+// };
 
 export default function MyEvents() {
     const { auth } = usePage<SharedData>().props;
     console.log('within my event Auth:', auth);
     const { events, fetchEvents, hasFetched } = useEventStore();
-    const [showForm, setShowForm] = useState(false);
     // const filteredEvents = filterOrganisationEvents(events, auth?.user?.organisationId || '');
 
     useEffect(() => {
