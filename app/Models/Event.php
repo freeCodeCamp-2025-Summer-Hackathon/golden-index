@@ -1,47 +1,62 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\ApiResource;
-use App\Contracts\BelongsToUser;
-use App\Traits\AutoAssignsUserId;
-use App\Api\State\AssignUserProcessor;
-use App\Api\State\AssignOrganisationUserProcessor;
-use App\Traits\HasUuid;
-use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Symfony\Component\Serializer\Attribute\Groups;
+use App\Api\State\EventProcessor;
 
-#[ApiResource( 
+#[ApiResource(
     operations: [
-        new GetCollection(security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')"),
-        new Get(security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')"),
+        new GetCollection(
+            security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')",
+            description: 'Retrieve all events with filtering and pagination support'
+        ),
+        new Get(
+            security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')",
+            description: 'Retrieve a specific event by ID'
+        ),
         new Post(
             security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')",
-            processor: AssignUserProcessor::class),
-        new Patch(security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')"),
-        new Delete(security: "is_granted('super-admin')")
-    ]
+            description: 'Create a new event',
+            processor: EventProcessor::class,
+        ),
+        new Patch(
+            security: "is_granted('super-admin') or is_granted('organisation-admin') or is_granted('event-organiser')",
+            description: 'Update an existing event',
+            processor: EventProcessor::class,
+        ),
+        new Delete(
+            security: "is_granted('super-admin')",
+            description: 'Delete an event (super-admin only)'
+        )
+    ],
+    description: 'Event management system for volunteer opportunities',
+    normalizationContext: ['groups' => ['event:read']],
+    denormalizationContext: ['groups' => ['event:write']],
+    paginationEnabled: true,
+    paginationItemsPerPage: 15,
+    paginationMaximumItemsPerPage: 100
 )]
 class Event extends Model
 {
-    use HasFactory, HasUuid, HasRoles, AutoAssignsUserId;
+    use HasFactory, HasUuids;
 
     protected $table = 'events';
     protected $primaryKey = 'event_id';
-    protected $keyType = 'string';
     public $incrementing = false;
+    protected $keyType = 'string';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'organisation_id',
         'event_title',
@@ -52,6 +67,7 @@ class Event extends Model
         'event_address',
         'is_virtual',
         'max_volunteers',
+        'current_volunteers',
         'is_urgent',
         'recurrence_pattern',
         'category_id',
@@ -61,93 +77,175 @@ class Event extends Model
         'required_skills',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
-        'start_datetime'    => 'datetime',
-        'end_datetime'      => 'datetime',
-        'is_virtual'        => 'boolean',
-        'is_urgent'         => 'boolean',
-        'is_high_risk'      => 'boolean',
+        'start_datetime' => 'datetime',
+        'end_datetime' => 'datetime',
+        'is_virtual' => 'boolean',
+        'is_urgent' => 'boolean',
+        'is_high_risk' => 'boolean',
         'is_group_friendly' => 'boolean',
-        'required_skills'   => 'array',
-        'created_at'        => 'datetime',
-        'updated_at'        => 'datetime',
+        'required_skills' => 'array',
+        'max_volunteers' => 'integer',
+        'current_volunteers' => 'integer',
     ];
 
-    /**
-     * The attributes that should have default values.
-     *
-     * @var array
-     */
-    protected $attributes = [
-        'is_virtual'         => false,
-        'current_volunteers' => 0,
-        'is_urgent'          => false,
-        'is_high_risk'       => false,
-        'is_group_friendly'  => false,
-    ];
+    #[Groups(['event:read', 'event:write'])]
+    protected $event_id;
 
-    /**
-     * Get the organization that owns the event.
-     */
-    public function organization(): BelongsTo
+    #[Groups(['event:read', 'event:write'])]
+    protected $organisation_id;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $event_title;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $event_description;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $start_datetime;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $end_datetime;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $location;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $event_address;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $is_virtual;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $max_volunteers;
+
+    #[Groups(['event:read'])]
+    protected $current_volunteers;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $is_urgent;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $recurrence_pattern;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $category_id;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $event_status_id;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $is_high_risk;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $is_group_friendly;
+
+    #[Groups(['event:read', 'event:write'])]
+    protected $required_skills;
+
+    #[Groups(['event:read'])]
+    protected $created_at;
+
+    #[Groups(['event:read'])]
+    protected $updated_at;
+
+    // Relationships - NO Groups attributes here
+    public function organisation(): BelongsTo
     {
-        return $this->belongsTo(Organisation::class, 'organisation_id');
+        return $this->belongsTo(Organisation::class, 'organisation_id', 'organisation_id');
     }
 
-    /**
-     * Get the event category.
-     */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Category::class, 'category_id', 'category_id');
     }
 
-    /**
-     * Get the event status.
-     */
     public function eventStatus(): BelongsTo
     {
         return $this->belongsTo(EventStatus::class, 'event_status_id', 'event_status_id');
     }
 
-    /**
-     * Scope a query to only include upcoming events.
-     */
+    public function registrations(): HasMany
+    {
+        return $this->hasMany(EventRegistration::class, 'event_id', 'event_id');
+    }
+
+    public function timeLogs(): HasMany
+    {
+        return $this->hasMany(VolunteerTimeLog::class, 'event_id', 'event_id');
+    }
+
+    public function volunteers()
+    {
+        return $this->belongsToMany(User::class, 'event_registration', 'event_id', 'user_id')
+                    ->withPivot('event_registration_status', 'approved_at', 'notes')
+                    ->withTimestamps();
+    }
+
+    // Keep only these accessor methods - these work fine
+    #[Groups(['event:read'])]
+    public function getIsFullAttribute(): bool
+    {
+        return $this->max_volunteers && $this->current_volunteers >= $this->max_volunteers;
+    }
+
+    #[Groups(['event:read'])]
+    public function getRemainingVolunteerSlotsAttribute(): ?int
+    {
+        return $this->max_volunteers ? $this->max_volunteers - $this->current_volunteers : null;
+    }
+
+    #[Groups(['event:read'])]
+    public function getDurationInHoursAttribute(): float
+    {
+        return $this->start_datetime->diffInHours($this->end_datetime);
+    }
+
+    // REMOVE THESE PROBLEMATIC METHODS:
+    // public function getOrganisationAttribute()
+    // public function getCategoryAttribute() 
+    // public function getEventStatusAttribute()
+
+    // Scopes remain the same
+    public function scopeActive($query)
+    {
+        return $query->whereHas('eventStatus', function ($q) {
+            $q->where('event_status_name', '!=', 'cancelled');
+        });
+    }
+
     public function scopeUpcoming($query)
     {
         return $query->where('start_datetime', '>', now());
     }
 
-    /**
-     * Scope a query to only include virtual events.
-     */
-    public function scopeVirtual($query)
-    {
-        return $query->where('is_virtual', true);
-    }
-
-    /**
-     * Scope a query to only include urgent events.
-     */
     public function scopeUrgent($query)
     {
         return $query->where('is_urgent', true);
     }
 
-    /**
-     * Check if the event has volunteer slots available.
-     */
-    public function hasVolunteerSlotsAvailable(): bool
+    public function scopeVirtual($query)
     {
-        if (is_null($this->max_volunteers)) {
-            return true;
-        }
+        return $query->where('is_virtual', true);
+    }
 
-        return $this->current_volunteers < $this->max_volunteers;
+    public function scopeInPerson($query)
+    {
+        return $query->where('is_virtual', false);
+    }
+
+    public function canAcceptVolunteers(): bool
+    {
+        return !$this->is_full && $this->start_datetime->isFuture();
+    }
+
+    public function incrementVolunteerCount(): void
+    {
+        $this->increment('current_volunteers');
+    }
+
+    public function decrementVolunteerCount(): void
+    {
+        $this->decrement('current_volunteers');
     }
 }
