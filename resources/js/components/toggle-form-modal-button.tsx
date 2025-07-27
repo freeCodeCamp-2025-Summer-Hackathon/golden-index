@@ -24,7 +24,7 @@ export default function ToggleFormModalButton({ buttonLabel, buttonClassName, Fo
             <div className="relative rounded-xl bg-white p-6 shadow-xl dark:bg-zinc-900">
               <button
                 onClick={() => setShowForm(false)}
-                className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:cursor-pointer"
                 aria-label="Close form"
               >
                 ✕
