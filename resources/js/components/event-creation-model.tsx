@@ -16,7 +16,7 @@ type Props = React.ComponentProps<'form'> & {
     scrollToTop?: () => void;
 };
 
-export default function EventCreationForm({ className }: Props) {
+export default function EventCreationForm({ onClose, className }: Props) {
     //Extract auth info (including token) from the global page props via Inertia.js
     const { auth } = usePage<SharedData>().props;
     //console.log('Auth data:', auth);
@@ -57,7 +57,7 @@ export default function EventCreationForm({ className }: Props) {
     const handleSubmit = async (e: React.FormEvent) => {
         console.log("handle submit called");
         e.preventDefault();
-        return; // Temporarily disable form submission for debugging
+        // return; // Temporarily disable form submission for debugging
         setIsSubmitting(true);
         setError(null);
 
@@ -108,7 +108,7 @@ export default function EventCreationForm({ className }: Props) {
                 throw new Error(responseData.error || responseData.message || 'Failed to create event');
             }
             console.log('Event creation successful');
-            window.location.reload(); // Refresh page to update roles/state
+            // window.location.reload(); // Refresh page to update roles/state
             toast('Event creation successful');
         } catch (error) {
             console.error('Error creating event:', error);
@@ -117,6 +117,7 @@ export default function EventCreationForm({ className }: Props) {
             formRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
             setIsSubmitting(false);
+            onClose?.(); // Close the form dialog if provided
         }
     };
 

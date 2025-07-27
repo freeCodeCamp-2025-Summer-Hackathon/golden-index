@@ -104,7 +104,7 @@ export default function VolunteerLogTimeForm({ className }: Props) {
                 throw new Error(responseData.error || responseData.message || 'Failed to register your volunteering hours');
             }
             //console.log('Volunteer time registration successful');
-            window.location.reload(); // Refresh page to update roles/state
+            // window.location.reload(); // Refresh page to update roles/state
             toast('Volunteering time registration successful');
         } catch (error) {
             console.error('Error registering volunteer time log:', error);

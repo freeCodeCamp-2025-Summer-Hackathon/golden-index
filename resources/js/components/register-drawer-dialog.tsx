@@ -191,7 +191,7 @@ const submitRegistrationData = async (data: VolunteerDataType | OrganisationData
 
             console.log('Registration successful');
             // Refresh the page to update user roles and hide the dialog
-            window.location.reload();
+            // window.location.reload();
             toast('Registration successful');
     }
 
