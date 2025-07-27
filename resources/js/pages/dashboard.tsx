@@ -32,7 +32,8 @@ export default function Dashboard() {
     console.log('within Dashboard Auth:', auth);
     const { events, fetchEvents, hasFetched, isLoading } = useEventStore();
     const isUserOrgAdmin = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'organisation-admin';
-    const isUserVolunteer = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'volunteer';
+    // const isUserVolunteer = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'volunteer';
+    const isUserVolunteer = auth.user.roles[0] === 'volunteer' || auth.user.roles[1] === 'volunteer';
     const organisationId: string = typeof auth.user?.organisationId === 'string' ? auth.user.organisationId : '';
 
     const filteredEvents = filterOrganisationEvents(events, organisationId || '');
@@ -150,15 +151,15 @@ export default function Dashboard() {
                                 </div>
 
                                 <div className="flex justify-center md:justify-start">
-                                    <Button
-                                        className="rounded-full bg-[#C8A74B]"
+                                    {isUserVolunteer && <Button
+                                        className="rounded-full bg-[#C8A74B] hover:cursor-pointer"
                                         onClick={() => alert(`Joining event: ${selectedEvent.event_title}`)}
                                         variant="default"
                                         size="lg"
                                         disabled={selectedEvent.current_volunteers >= (selectedEvent.max_volunteers ?? Infinity)}
                                     >
                                         {selectedEvent.current_volunteers >= (selectedEvent.max_volunteers ?? Infinity) ? 'Event Full' : 'Join Event'}
-                                    </Button>
+                                    </Button>}
                                 </div>
                             </div>
                         </div>

@@ -59,7 +59,7 @@ export default function MyEvents() {
     const isUserOrgAdmin = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'organisation-admin';
     // Check if user has only the 'volunteer' role with safety checks
     // const isUserVolunteer = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'volunteer';
-    const isUserVolunteer = auth.user?.roles?.length > 0 && auth.user.roles[0] === 'volunteer';
+    const isUserVolunteer = auth.user.roles[0] === 'volunteer' || auth.user.roles[1] === 'volunteer';
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -141,15 +141,15 @@ export default function MyEvents() {
                                 </div>
 
                                 <div className="flex justify-center md:justify-start">
-                                    <Button
-                                        className="rounded-full bg-[#C8A74B]"
+                                    {isUserVolunteer && <Button
+                                        className="rounded-full bg-[#C8A74B] hover:cursor-pointer"
                                         onClick={() => alert(`Joining event: ${selectedEvent.event_title}`)}
                                         variant="default"
                                         size="lg"
                                         disabled={selectedEvent.current_volunteers >= (selectedEvent.max_volunteers ?? Infinity)}
                                     >
                                         {selectedEvent.current_volunteers >= (selectedEvent.max_volunteers ?? Infinity) ? 'Event Full' : 'Join Event'}
-                                    </Button>
+                                    </Button>}
                                 </div>
                             </div>
                         </div>
