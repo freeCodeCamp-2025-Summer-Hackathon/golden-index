@@ -5,10 +5,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
+import useEventStore from '@/store/eventStore';
 import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 import React, { useRef, useState } from 'react';
 import { toast } from 'sonner';
+
 //import { useMediaQuery } from '@/hooks/use-media-query';
 
 type Props = React.ComponentProps<'form'> & {
@@ -17,6 +19,7 @@ type Props = React.ComponentProps<'form'> & {
 };
 
 export default function EventCreationForm({ onClose, className }: Props) {
+    const { fetchEvents } = useEventStore();
     //Extract auth info (including token) from the global page props via Inertia.js
     const { auth } = usePage<SharedData>().props;
     //console.log('Auth data:', auth);
@@ -55,7 +58,7 @@ export default function EventCreationForm({ onClose, className }: Props) {
 
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
-        console.log("handle submit called");
+        console.log('handle submit called');
         e.preventDefault();
         // return; // Temporarily disable form submission for debugging
         setIsSubmitting(true);
@@ -110,6 +113,7 @@ export default function EventCreationForm({ onClose, className }: Props) {
             console.log('Event creation successful');
             // window.location.reload(); // Refresh page to update roles/state
             toast('Event creation successful');
+            await fetchEvents(token);
         } catch (error) {
             console.error('Error creating event:', error);
             const message = error instanceof Error ? error.message : 'Failed to create event. Please try again.';

@@ -172,6 +172,7 @@ const submitRegistrationData = async (data: VolunteerDataType | OrganisationData
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(data),

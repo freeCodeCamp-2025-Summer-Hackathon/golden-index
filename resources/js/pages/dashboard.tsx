@@ -9,7 +9,7 @@ import AppLayout from '@/layouts/app-layout';
 import useEventStore from '@/store/eventStore';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { CalendarDays, Info, MapPin, Users } from 'lucide-react';
+import { CalendarDays, Info, Loader2, MapPin, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -30,11 +30,12 @@ const filterOrganisationEvents = (events: EventType[], organisationId: string) =
 export default function Dashboard() {
     const { auth } = usePage<SharedData>().props;
     console.log('within Dashboard Auth:', auth);
-    const { events, fetchEvents, hasFetched } = useEventStore();
+    const { events, fetchEvents, hasFetched, isLoading } = useEventStore();
     const isUserOrgAdmin = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'organisation-admin';
-    const isUserVolunteer = auth.user?.roles?.length > 0 && auth.user.roles[0] === 'volunteer';
+    const isUserVolunteer = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'volunteer';
+    const organisationId: string = typeof auth.user?.organisationId === 'string' ? auth.user.organisationId : '';
 
-    // const filteredEvents = filterOrganisationEvents(events, auth?.user?.organisationId || '');
+    const filteredEvents = filterOrganisationEvents(events, organisationId || '');
 
     console.log('Events:', events);
 
@@ -44,7 +45,8 @@ export default function Dashboard() {
         }
     }, [hasFetched, auth?.token, fetchEvents]);
 
-    const allEvents = events;
+    let allEvents;
+    isUserOrgAdmin ? allEvents = filteredEvents : allEvents = events;
 
     // console.log(allEvents);
     // console.log("Auth", auth);
@@ -68,6 +70,12 @@ export default function Dashboard() {
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 {shouldShowRegisterDialog && <RegisterDrawerDialog />}
 
+                {isLoading && (
+                <div className="flex justify-center items-center gap-2 text-sm text-muted-foreground py-4">
+                    <Loader2 className="animate-spin h-4 w-4" />
+                    Refreshing events...
+                </div>
+                )}
                 {isUserVolunteer && (
                     <ToggleFormModalButton buttonLabel="Log in your Hours" buttonClassName="bg-[#C8A74B]" FormComponent={VolunteerLogTimeForm} />
                 )}

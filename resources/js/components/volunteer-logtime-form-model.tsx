@@ -24,7 +24,7 @@ type Props = React.ComponentProps<'form'> & {
   scrollToTop?: () => void;
 };
 
-export default function VolunteerLogTimeForm({ className }: Props) {
+export default function VolunteerLogTimeForm({ onClose, className }: Props) {
     //Extract auth info (including token) from the global page props via Inertia.js
     const { auth } = usePage<SharedData>().props;
     //Use a custom hook to determine if the screen size is desktop or mobile
@@ -113,6 +113,7 @@ export default function VolunteerLogTimeForm({ className }: Props) {
             formRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
             setIsSubmitting(false);
+            onClose?.(); // Close the form modal if provided
         }
     };
 
