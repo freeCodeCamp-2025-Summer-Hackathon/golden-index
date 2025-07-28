@@ -1,6 +1,5 @@
 import EventCreationForm from '@/components/event-creation-model';
 import { EventCard, EventType } from '@/components/events-card';
-import RegisterDrawerDialog from '@/components/register-drawer-dialog';
 import ToggleFormModalButton from '@/components/toggle-form-modal-button';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,36 +8,29 @@ import AppLayout from '@/layouts/app-layout';
 import useEventStore from '@/store/eventStore';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import { CalendarDays, Info, Loader2, MapPin, Users } from 'lucide-react';
+import { CalendarDays, Info, MapPin, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
+        title: 'My Events',
+        href: '/my-events',
     },
 ];
 
 // Function to filter events based on organisation ID
-const filterOrganisationEvents = (events: EventType[], organisationId: string) => {
-    return events.filter((event) => {
-        if (!('organisation_id' in event)) return true; // This line to be removed later when organisation_id is added to Event
-        return event?.organisation_id === organisationId;
-    });
-};
+// const filterOrganisationEvents = (events: EventType[], organisationId: string) => {
+//     return events.filter((event) => {
+//         if (!('organisation_id' in event)) return true; // This line to be removed later when organisation_id is added to Event
+//         return event?.organisation_id === organisationId;
+//     });
+// };
 
-export default function Dashboard() {
+export default function MyEvents() {
     const { auth } = usePage<SharedData>().props;
-    console.log('within Dashboard Auth:', auth);
-    const { events, fetchEvents, hasFetched, isLoading } = useEventStore();
-    const isUserOrgAdmin = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'organisation-admin';
-    // const isUserVolunteer = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'volunteer';
-    const isUserVolunteer = auth.user.roles[0] === 'volunteer' || auth.user.roles[1] === 'volunteer';
-    const organisationId: string = typeof auth.user?.organisationId === 'string' ? auth.user.organisationId : '';
-
-    const filteredEvents = filterOrganisationEvents(events, organisationId || '');
-
-    console.log('Events:', events);
+    console.log('within my event Auth:', auth);
+    const { events, fetchEvents, hasFetched } = useEventStore();
+    // const filteredEvents = filterOrganisationEvents(events, auth?.user?.organisationId || '');
 
     useEffect(() => {
         if (!hasFetched && auth?.token) {
@@ -46,7 +38,7 @@ export default function Dashboard() {
         }
     }, [hasFetched, auth?.token, fetchEvents]);
 
-    const allEvents = isUserOrgAdmin ? filteredEvents : events;
+    const allEvents = events;
 
     // console.log(allEvents);
     // console.log("Auth", auth);
@@ -62,20 +54,18 @@ export default function Dashboard() {
         }
     }, [defaultUpcomingEvent, selectedEvent]);
 
-    // Check if user has only the 'user' role with safety checks
-    const shouldShowRegisterDialog = auth.user?.roles?.length === 1 && auth.user.roles[0] === 'user';
+    // Check if user has only the 'organisation-admin' role with safety checks
+    const isUserOrgAdmin = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'organisation-admin';
+    // Check if user has only the 'volunteer' role with safety checks
+    // const isUserVolunteer = auth.user?.roles?.length === 2 && auth.user.roles[1] === 'volunteer';
+    const isUserVolunteer = auth.user.roles[0] === 'volunteer' || auth.user.roles[1] === 'volunteer';
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                {shouldShowRegisterDialog && <RegisterDrawerDialog />}
-
-                {isLoading && (
-                <div className="flex justify-center items-center gap-2 text-sm text-muted-foreground py-4">
-                    <Loader2 className="animate-spin h-4 w-4" />
-                    Refreshing events...
-                </div>
-                )}
+                {/* If user is volunteer, show log time form button */}
+                {/* Top right button, only if form is NOT shown */}
                 {isUserVolunteer && (
                     <ToggleFormModalButton buttonLabel="Log in your Hours" buttonClassName="bg-[#C8A74B]" FormComponent={VolunteerLogTimeForm} />
                 )}

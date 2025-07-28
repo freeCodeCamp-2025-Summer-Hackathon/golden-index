@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { toast } from 'sonner';
 //import { useMediaQuery } from '@/hooks/use-media-query';
 import useEventStore from '@/store/eventStore';
@@ -19,8 +19,12 @@ import useEventStore from '@/store/eventStore';
 //     totalItems: number;
 //     member: EventType[];
 // }
+type Props = React.ComponentProps<'form'> & {
+  onClose?: () => void;
+  scrollToTop?: () => void;
+};
 
-export default function VolunteerLogTimeForm({ className }: React.ComponentProps<'form'> & { onClose?: () => void }) {
+export default function VolunteerLogTimeForm({ onClose, className }: Props) {
     //Extract auth info (including token) from the global page props via Inertia.js
     const { auth } = usePage<SharedData>().props;
     //Use a custom hook to determine if the screen size is desktop or mobile
@@ -32,7 +36,7 @@ export default function VolunteerLogTimeForm({ className }: React.ComponentProps
     const [checkInTime, setCheckInTime] = useState('');
     const [checkOutTime, setCheckOutTime] = useState('');
     // const [events, setEvents] = useState<EventType[]>([]);
-
+    const formRef = useRef<HTMLFormElement>(null);
     const { events } = useEventStore();
 
     // useEffect(() => {
@@ -100,19 +104,21 @@ export default function VolunteerLogTimeForm({ className }: React.ComponentProps
                 throw new Error(responseData.error || responseData.message || 'Failed to register your volunteering hours');
             }
             //console.log('Volunteer time registration successful');
-            window.location.reload(); // Refresh page to update roles/state
+            // window.location.reload(); // Refresh page to update roles/state
             toast('Volunteering time registration successful');
         } catch (error) {
             console.error('Error registering volunteer time log:', error);
             const message = error instanceof Error ? error.message : 'Failed to register as volunteer. Please try again.';
             setError(message);
+            formRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
             setIsSubmitting(false);
+            onClose?.(); // Close the form modal if provided
         }
     };
 
     return (
-        <form className={cn('grid items-start gap-4', className)} onSubmit={handleSubmit} noValidate>
+        <form ref={formRef} className={cn('grid max-h-[60vh] items-start gap-4 overflow-y-auto', className)} onSubmit={handleSubmit} noValidate>
             {error && <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-900/20 dark:text-red-200">{error}</div>}
             <Card className="w-full max-w-sm">
                 <CardHeader>
@@ -129,8 +135,8 @@ export default function VolunteerLogTimeForm({ className }: React.ComponentProps
                             <SelectContent>
                                 {events.length > 0 &&
                                     events.map((event) => (
-                                        <SelectItem key={event.eventId} value={event.eventId}>
-                                            {event.eventTitle}
+                                        <SelectItem key={event.event_id} value={event.event_id}>
+                                            {event.event_title}
                                         </SelectItem>
                                     ))}
                             </SelectContent>

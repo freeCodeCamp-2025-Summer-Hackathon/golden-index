@@ -2,17 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
-use App\Models\User;
-
 
 class RoleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         Role::firstOrCreate(['name' => 'super-admin']);
@@ -30,6 +24,19 @@ class RoleSeeder extends Seeder
             echo "User assigned super-admin role.";
         } else {
             echo "User not found.";
+        // Just create the roles - assignment happens in DatabaseSeeder
+        $roles = [
+            'super-admin',
+            'organisation-admin', 
+            'volunteer',
+            'event-organiser',
+            'user'
+        ];
+
+        foreach ($roles as $roleName) {
+            Role::firstOrCreate(['name' => $roleName]);
+            $this->command->info("Created role: {$roleName}");
         }
     }
+}
 }
