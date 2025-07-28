@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->uuid('registration_id')->primary();
             $table->uuid('user_id');
             $table->uuid('event_id');
-            $table->enum('event_registration_status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('event_registration_status', ['pending', 'approved', 'rejected'])->default('approved');
             $table->timestamps(); // This creates created_at and updated_at automatically
             $table->dateTime('approved_at')->nullable(); // Fixed: should be nullable
             $table->text('notes')->nullable();

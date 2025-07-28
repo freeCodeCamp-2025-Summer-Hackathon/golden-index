@@ -11,6 +11,7 @@ import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { CalendarDays, Info, Loader2, MapPin, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -62,6 +63,40 @@ export default function Dashboard() {
         }
     }, [defaultUpcomingEvent, selectedEvent]);
 
+    const joinEvent = async (event_id: string) => {
+        try {
+            const token = auth?.token;
+            const joinEventData = {
+                event_id: event_id,
+                note: '',
+            };
+            const response = await fetch('/api/event_registrations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(joinEventData),
+            });
+
+            // Attempt to parse JSON response safely
+            let responseData;
+            try {
+                responseData = await response.json();
+                toast.success('Joined event successful');
+            } catch {
+                throw new Error('Server returned invalid response. Please try again.');
+            }
+
+            if (!response.ok) {
+                throw new Error(responseData.error || responseData.message || 'Failed to create event');
+            }
+        } catch (error) {
+            console.error('Error joining event:', error);
+            const message = error instanceof Error ? error.message : 'Failed to join event. Please try again.';
+            toast.error(message);
+        }
+    };
     // Check if user has only the 'user' role with safety checks
     const shouldShowRegisterDialog = auth.user?.roles?.length === 1 && auth.user.roles[0] === 'user';
     return (
@@ -71,10 +106,10 @@ export default function Dashboard() {
                 {shouldShowRegisterDialog && <RegisterDrawerDialog />}
 
                 {isLoading && (
-                <div className="flex justify-center items-center gap-2 text-sm text-muted-foreground py-4">
-                    <Loader2 className="animate-spin h-4 w-4" />
-                    Refreshing events...
-                </div>
+                    <div className="flex items-center justify-center gap-2 py-4 text-sm text-muted-foreground">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Refreshing events...
+                    </div>
                 )}
                 {isUserVolunteer && (
                     <ToggleFormModalButton buttonLabel="Log in your Hours" buttonClassName="bg-[#C8A74B]" FormComponent={VolunteerLogTimeForm} />
@@ -150,15 +185,19 @@ export default function Dashboard() {
                                 </div>
 
                                 <div className="flex justify-center md:justify-start">
-                                    {isUserVolunteer && <Button
-                                        className="rounded-full bg-[#C8A74B] hover:cursor-pointer"
-                                        onClick={() => alert(`Joining event: ${selectedEvent.event_title}`)}
-                                        variant="default"
-                                        size="lg"
-                                        disabled={selectedEvent.current_volunteers >= (selectedEvent.max_volunteers ?? Infinity)}
-                                    >
-                                        {selectedEvent.current_volunteers >= (selectedEvent.max_volunteers ?? Infinity) ? 'Event Full' : 'Join Event'}
-                                    </Button>}
+                                    {isUserVolunteer && (
+                                        <Button
+                                            className="rounded-full bg-[#C8A74B] hover:cursor-pointer"
+                                            onClick={() => joinEvent(selectedEvent.event_id)}
+                                            variant="default"
+                                            size="lg"
+                                            disabled={selectedEvent.current_volunteers >= (selectedEvent.max_volunteers ?? Infinity)}
+                                        >
+                                            {selectedEvent.current_volunteers >= (selectedEvent.max_volunteers ?? Infinity)
+                                                ? 'Event Full'
+                                                : 'Join Event'}
+                                        </Button>
+                                    )}
                                 </div>
                             </div>
                         </div>
