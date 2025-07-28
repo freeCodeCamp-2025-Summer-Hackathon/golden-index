@@ -71,6 +71,4 @@ class Volunteer extends Model implements BelongsToUser
         return $this->belongsToMany(Event::class, 'event_registrations', 'volunteer_id', 'event_id')
                     ->withTimestamps();
     }
-
-
 }

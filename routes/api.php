@@ -31,6 +31,13 @@ Route::post('/volunteers', function (Request $request) {
     ]);
 })->middleware('auth:api');
 
+Route::post('/event_registrations', function (Request $request) {
+    return response()->json([
+        'authenticated_user_id' => $request->user()?->id,
+        'user' => $request->user(),
+    ]);
+})->middleware('auth:api');
+
 Route::post('/volunteer-time-log', function (Request $request) {
     $validated = $request->validate([
         'volunteer_time_log_id' => 'required|uuid',

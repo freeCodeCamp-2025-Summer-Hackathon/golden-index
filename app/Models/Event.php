@@ -16,6 +16,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Symfony\Component\Serializer\Attribute\Groups;
 use App\Api\State\EventProcessor;
 use App\Api\State\EventProvider;
+use App\Models\User;
+use App\Models\EventRegistration;
+
 
 #[ApiResource(
     operations: [
@@ -170,21 +173,9 @@ class Event extends Model
         return $this->belongsTo(EventStatus::class, 'event_status_id', 'event_status_id');
     }
 
-    public function registrations(): HasMany
-    {
-        return $this->hasMany(EventRegistration::class, 'event_id', 'event_id');
-    }
-
     public function timeLogs(): HasMany
     {
         return $this->hasMany(VolunteerTimeLog::class, 'event_id', 'event_id');
-    }
-
-    public function volunteers()
-    {
-        return $this->belongsToMany(User::class, 'event_registration', 'event_id', 'user_id')
-                    ->withPivot('event_registration_status', 'approved_at', 'notes')
-                    ->withTimestamps();
     }
 
     // Keep only these accessor methods - these work fine
@@ -252,5 +243,17 @@ class Event extends Model
     public function decrementVolunteerCount(): void
     {
         $this->decrement('current_volunteers');
+    }
+
+    public function registrations(): HasMany
+    {
+        return $this->hasMany(EventRegistration::class, 'event_id', 'event_id');
+    }
+
+    public function volunteers()
+    {
+        return $this->belongsToMany(User::class, 'event_registration', 'event_id', 'user_id')
+                    ->withPivot('event_registration_status', 'approved_at', 'notes')
+                    ->withTimestamps();
     }
 }
